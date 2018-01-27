@@ -3,7 +3,7 @@
 # https://cloud.google.com/trace/docs/setup/nodejs
 # https://github.com/GoogleCloudPlatform/cloud-trace-nodejs
 
-export PROJECT_ID=kenthua-testing
+export PROJECT_ID=$PROJECT_ID
 gcloud container clusters create trace-cluster --scopes https://www.googleapis.com/auth/trace.append
 
 ##
@@ -22,7 +22,7 @@ kubectl apply -f k8s/service.yaml
 
 
 # updating / patching
-gcloud container images add-tag gcr.io/kenthua-testing/node-app:v1 gcr.io/kenthua-testing/node-app:v1.1
+gcloud container images add-tag gcr.io/$PROJECT_ID/node-app:v1 gcr.io/$PROJECT_ID/node-app:v1.1
 # edit patch.yaml accordingly
 kubectl patch --local -o yaml -f k8s/deployment.yaml -p "$(cat patch.yaml)" > k8s/deployment.yaml
 kubectl apply -f k8s/deployment.yaml
