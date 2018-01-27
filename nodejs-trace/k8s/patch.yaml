@@ -1,0 +1,6 @@
+spec:
+  template:
+    spec:
+      containers:
+        - name: node-web
+          image: gcr.io/kenthua-testing/node-app:v1.1

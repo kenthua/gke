@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: node-web
+  name: node-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: node-web
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: node-web
+    spec:
+      containers:
+      - image: gcr.io/kenthua-testing/node-app:v1
+        imagePullPolicy: Always
+        name: node-web
+        ports:
+        - containerPort: 8080
+        resources: {}
+status: {}
