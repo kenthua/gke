@@ -5,6 +5,12 @@
 
 export PROJECT_ID=$PROJECT_ID
 gcloud container clusters create trace-cluster --scopes https://www.googleapis.com/auth/trace.append
+######
+##OR##
+######
+cd tf
+terraform plan
+terrfaorm apply
 
 ##
 docker build -t gcr.io/$PROJECT_ID/node-app:v1 .
