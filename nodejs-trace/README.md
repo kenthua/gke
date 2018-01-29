@@ -1,56 +1,69 @@
 # Stackdriver Trace sample for Node.js
 
-This sample demonstrates [StackDriver Trace][trace] with Node.js.
+### Sources
+# https://cloud.google.com/trace/docs/setup/nodejs
+# https://github.com/GoogleCloudPlatform/cloud-trace-nodejs
 
-* [Setup](#setup)
-* [Running locally](#running-locally)
-* [Deploying to App Engine](#deploying-to-app-engine)
-* [Running the tests](#running-the-tests)
+### Start
 
-## Setup
+```
+cd tf
+terraform plan
+terrfaorm apply
+```
 
-Before you can run or deploy the sample, you need to do the following:
+or manually,
 
-1.  Refer to the [appengine/README.md][readme] file for instructions on
-    running and deploying.
-1.  [Create a Google Analytics Property and obtain the Tracking ID][tracking].
-1.  Add your tracking ID to `app.yaml`.
-1.  Install dependencies:
+```
+export PROJECT_ID=$PROJECT_ID
+gcloud container clusters create trace-cluster --scopes https://www.googleapis.com/auth/trace.append
+```
 
-    With `npm`:
+### Build the container image
 
-        npm install
+```
+gcloud container builds submit --config cloudbuild.yaml .
 
-    or with `yarn`:
+```
 
-        yarn install
+or manually,
 
-## Running locally
+```
+docker build -t gcr.io/$PROJECT_ID/node-app:v1 .
+gcloud docker -- push gcr.io/$PROJECT_ID/node-app:v1
+```
 
-With `npm`:
+### Deployment
 
-    npm start
+Generate configs appropriate for your environment
 
-or with `yarn`:
+```
+kubectl run node-web --image=gcr.io/$PROJECT_ID/node-app:v1 --port 8080 --image-pull-policy Always --dry-run -o yaml > k8s/deployment.yaml
+kubectl expose deployment node-web --type=LoadBalancer --port 80 --target-port 8080 --dry-run -o yaml > k8s/service.yaml
+```
 
-    yarn start
+or modify the existing files and apply
 
-## Deploying to App Engine
+```
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+```
 
-With `npm`:
+Delete if necessary
 
-    npm run deploy
+```
+kubectl delete deployment node-web
+```
 
-or with `yarn`:
+### Bonus: Tagging versions in GCR
 
-    yarn run deploy
+```
+gcloud container images add-tag gcr.io/$PROJECT_ID/node-app:v1 gcr.io/$PROJECT_ID/node-app:v1.1
+```
 
-Use the [Stackdriver Trace dashboard](https://console.cloud.google.com/traces/traces) to inspect recorded traces.
+Edit patch.yaml accordingly
 
-## Running the tests
-
-See [Contributing][contributing].
-
-[trace]: https://cloud.google.com/trace/
-[readme]: ../README.md
-[contributing]: https://github.com/GoogleCloudPlatform/nodejs-docs-samples/blob/master/CONTRIBUTING.md
+```
+kubectl patch --local -o yaml -f k8s/deployment.yaml -p "$(cat patch.yaml)" > k8s/deployment.yaml
+kubectl apply -f k8s/deployment.yaml
+```
