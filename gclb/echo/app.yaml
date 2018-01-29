@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: my-echo-deploy
+  name: my-echo
 spec:
   replicas: 2
   template:
@@ -25,9 +25,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-echo-svc
+  name: my-echo
   annotations:
-      service.alpha.kubernetes.io/app-protocols: '{"my-https-port":"HTTPS"}'   # Must map port-name to HTTPS for the GCP ingress controller
+    service.alpha.kubernetes.io/app-protocols: '{"https-port":"HTTPS"}'   # Must map port-name to HTTPS for the GCP ingress controller
   labels:
     app: echo
 spec:
@@ -36,7 +36,7 @@ spec:
   - port: 12345  # Port doesn't matter as nodeport is used for Ingress
     targetPort: echo-443
     protocol: TCP
-    name: my-https-port
+    name: https-port
   selector:
     app: echo
 ---
@@ -46,9 +46,11 @@ metadata:
   name: my-echo-ingress
   annotations:
     kubernetes.io/ingress.class: "gce"  
+  labels:
+    app: echo
 spec:
   tls:
     - secretName: gcp-tls
   backend:
-    serviceName: my-echo-svc
-    servicePort: my-https-port
+    serviceName: my-echo
+    servicePort: https-port
