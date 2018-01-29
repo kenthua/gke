@@ -29,4 +29,3 @@ kubectl apply -f nginx-secret-tls.yaml
 kubectl apply -f nginx-secure-app.yaml
 kubectl apply -f nginx-service-internal.yaml
 ```
-
