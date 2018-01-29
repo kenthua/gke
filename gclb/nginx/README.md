@@ -14,7 +14,7 @@ The nginx app references the certificates from the secret
 
 ```
 gcloud compute ssl-certificates create test-cert --certificate=ssl/gcp-tls.crt
---private-key=ssl/gcp-tls.key --project=kenthua-testing
+--private-key=ssl/gcp-tls.key --project=$PROJECT_ID
 kubectl apply -f nginx-secret-tls.yaml
 kubectl apply -f nginx-secure-app.yaml
 kubectl apply -f nginx-service.yaml
