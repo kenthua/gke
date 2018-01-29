@@ -1,8 +1,8 @@
 # Stackdriver Trace sample for Node.js
 
 ### Sources
-# https://cloud.google.com/trace/docs/setup/nodejs
-# https://github.com/GoogleCloudPlatform/cloud-trace-nodejs
+https://cloud.google.com/trace/docs/setup/nodejs
+https://github.com/GoogleCloudPlatform/cloud-trace-nodejs
 
 ### Start
 
@@ -40,6 +40,8 @@ Generate configs appropriate for your environment
 ```
 kubectl run node-web --image=gcr.io/$PROJECT_ID/node-app:v1 --port 8080 --image-pull-policy Always --dry-run -o yaml > k8s/deployment.yaml
 kubectl expose deployment node-web --type=LoadBalancer --port 80 --target-port 8080 --dry-run -o yaml > k8s/service.yaml
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
 ```
 
 or modify the existing files and apply
