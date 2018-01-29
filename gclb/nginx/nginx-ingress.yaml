@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: my-nginx-ingress
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+spec:
+  tls:
+# possibly not needed?
+#    - hosts:
+#        - my-nginx.gcp.techknowledgeshare.net
+    - secretName: gcp-tls
+  backend:
+    serviceName: my-nginx
+    servicePort: my-https-port

@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: my-nginx-ingress
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    ingress.gcp.kubernetes.io/pre-shared-cert: "test-cert"
+spec:
+# possibly not needed?
+#    - hosts:
+#        - my-nginx.gcp.techknowledgeshare.net
+  backend:
+    serviceName: my-nginx
+    servicePort: my-https-port
