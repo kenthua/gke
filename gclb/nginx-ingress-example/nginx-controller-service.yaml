@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-0.8.26
+    component: controller
+    heritage: Tiller
+    release: my-nginx
+  name: a-nginx-ingress-controller
+  namespace: default
+  annotations:
+    cloud.google.com/load-balancer-type: Internal
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - name: http
+    nodePort: 32558
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  - name: https
+    nodePort: 31834
+    port: 443
+    protocol: TCP
+    targetPort: 443
+  selector:
+    app: nginx-ingress
+    component: controller
+    release: a
+  sessionAffinity: None
+  type: LoadBalancer
