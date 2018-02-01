@@ -1,0 +1,7 @@
+[
+  {
+    'op': 'add',
+    'path': '/metadata/annotations',
+    'value': 'cloud.google.com/load-balancer-type: Internal'
+  }
+]
