@@ -25,14 +25,12 @@ curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/ud
 ```
 
 Apply the service
-*NOTE* Internal IP scenario not fully working, having issues with timeouts
-
 ```
-kubectl apply -f ingress-nginx-service.yaml
+curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/provider/gce-gke/service.yaml \
+    | kubectl apply -f -
 ```
 
 Apply the deployment
-
 ```
 kubectl apply -f ingress-nginx-deployment.yaml
 ```
@@ -58,7 +56,6 @@ kubectl apply -f my-echo-ingress.yaml
 Follow [nginx backend](https://github.com/kenthua/gke/tree/master/gclb/nginx)
 
 Apply the ingress for nginx
-
 ```
 kubectl apply -f my-nginx-ingress.yaml
 ```
