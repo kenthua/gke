@@ -20,13 +20,17 @@ helm install stable/nginx-ingress --name a
 
 Replace the original nginx-ingress-controller service with a modified one to use TCP L4 internal IP
 ```
+kubectl annotate svc a-nginx-ingress-controller cloud.google.com/load-balancer-type=Internal
+```
+or
+```
 kubectl delete svc a-nginx-ingress-controller
-kubectl apply -f nginx-controller-service.yaml.yaml
+kubectl apply -f nginx-controller-service.yaml
 ```
 
 Patch ingress-nginx deployment with gce/gke parameter publish service 
 ```
-kubectl patch deployment a-nginx-ingress-controller --type='json' --patch="$(cat publish-service-patch.yaml )"
+kubectl patch deployment a-nginx-ingress-controller --type='json' --patch="$(cat publish-service-patch.json)"
 ```
 
 Install a sample app
