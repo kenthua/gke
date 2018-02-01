@@ -2,7 +2,8 @@
 
 ### Sources
 * [Overview and install](https://github.com/kubernetes/ingress-nginx)
-* [Annotations](https://github.com/kubernetes/ingress-gce/blob/master/docs/annotations.md)
+* [Annotations nginx](https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/annotations.md)
+* [Annotations GCP](https://github.com/kubernetes/ingress-gce/blob/master/docs/annotations.md)
 
 
 Setup helm if necessary
