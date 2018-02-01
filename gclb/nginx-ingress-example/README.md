@@ -46,3 +46,18 @@ Apply the nginx ingress manifest for helloweb
 kubectl apply -f helloweb-ingress.yaml
 ```
 
+### Bonus - SSL Backends
+Follow [Echo](https://github.com/kenthua/gke/tree/master/gclb/echo)
+
+Apply the ingress for echo
+```
+kubectl apply -f my-echo-ingress.yaml
+```
+
+Follow [nginx backend](https://github.com/kenthua/gke/tree/master/gclb/nginx)
+
+Apply the ingress for nginx
+
+```
+kubectl apply -f my-nginx-ingress.yaml
+```
