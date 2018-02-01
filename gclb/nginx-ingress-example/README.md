@@ -25,6 +25,7 @@ curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/ud
 ```
 
 Apply the service
+*NOTE* Internal IP scenario not fully working, having issues with timeouts
 
 ```
 kubectl apply -f ingress-nginx-service.yaml
