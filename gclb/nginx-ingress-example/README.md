@@ -1,5 +1,10 @@
 ### ingress-nginx on GKE
 
+### Sources
+* [Overview and install](https://github.com/kubernetes/ingress-nginx)
+* [Annotations](https://github.com/kubernetes/ingress-gce/blob/master/docs/annotations.md)
+
+
 Setup helm if necessary
 
 ```
