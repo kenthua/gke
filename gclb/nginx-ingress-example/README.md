@@ -6,32 +6,34 @@
 * [Annotations GCP](https://github.com/kubernetes/ingress-gce/blob/master/docs/annotations.md)
 
 
-Setup helm if necessary
+Pre-reqs
+```
+curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/namespace.yaml \
+    | kubectl apply -f -
 
-```
-kubectl create serviceaccount -n kube-system tiller
-kubectl create clusterrolebinding tiller-binding     --clusterrole=cluster-admin     --serviceaccount kube-system:tiller
-helm init --service-account tiller
-```
+curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/default-backend.yaml \
+    | kubectl apply -f -
 
-Setup ingress-nginx via helm with release name `a`
-```
-helm install stable/nginx-ingress --name a
-```
+curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/configmap.yaml \
+    | kubectl apply -f -
 
-Replace the original nginx-ingress-controller service with a modified one to use TCP L4 internal IP
-```
-kubectl annotate svc a-nginx-ingress-controller cloud.google.com/load-balancer-type=Internal
-```
-or
-```
-kubectl delete svc a-nginx-ingress-controller
-kubectl apply -f nginx-controller-service.yaml
+curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/tcp-services-configmap.yaml \
+    | kubectl apply -f -
+
+curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/udp-services-configmap.yaml \
+    | kubectl apply -f -
 ```
 
-Patch ingress-nginx deployment with gce/gke parameter publish service 
+Apply the service
+
 ```
-kubectl patch deployment a-nginx-ingress-controller --type='json' --patch="$(cat publish-service-patch.json)"
+kubectl apply -f ingress-nginx-service.yaml
+```
+
+Apply the deployment
+
+```
+kubectl apply -f ingress-nginx-deployment.yaml
 ```
 
 Install a sample app

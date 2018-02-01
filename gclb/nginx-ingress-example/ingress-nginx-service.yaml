@@ -1,0 +1,21 @@
+kind: Service
+apiVersion: v1
+metadata:
+  annotations:
+    cloud.google.com/load-balancer-type: Internal
+  name: ingress-nginx
+  namespace: ingress-nginx
+  labels:
+    app: ingress-nginx
+spec:
+  externalTrafficPolicy: Local
+  type: LoadBalancer
+  selector:
+    app: ingress-nginx
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+  - name: https
+    port: 443
+    targetPort: https
