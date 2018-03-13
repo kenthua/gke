@@ -37,15 +37,14 @@ curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/rb
     | kubectl apply -f -
 ```
 
-Apply the service (L4 external IP)
+Apply the service:
+* L4 external IP
 ```
 curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/provider/gce-gke/service.yaml \
     | kubectl apply -f -
 ```
-
 OR
-
-Apply the service (L4 internal IP)
+* L4 internal IP
 ```
 kubectl apply -f ingress-nginx-service-internal.yaml
 ```
