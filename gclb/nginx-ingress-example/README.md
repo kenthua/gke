@@ -5,6 +5,7 @@
 * [Annotations nginx](https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/annotations.md)
 * [Annotations GCP](https://github.com/kubernetes/ingress-gce/blob/master/docs/annotations.md)
 
+*Tested* - GKE 1.8.7-gke.1
 
 Pre-reqs
 ```
@@ -52,7 +53,6 @@ kubectl apply -f ingress-nginx-service-internal.yaml
 Apply the deployment (without rbac)
 ```
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/provider/patch-service-with-rbac.yaml
-
 ```
 
 Install a sample app
