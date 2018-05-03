@@ -9,3 +9,18 @@ kubectl apply -f k8s/test-cm.yaml
 kubectl create cm prop --from-file props/
 kubectl apply -f k8s/app.yaml
 ----
+
+Login to your container
+[source,bash]
+----
+kubectl exec -it <pod> /bin/bash
+
+# list environment variables and look for SECRET_USERNAME, SECRET_PASSWORD, DB_URL
+export
+
+# check out some files in the filesystem
+ls /opt/properties
+ls /opt/secret
+cat /opt/secret/username
+cat /opt/secret/password
+----
