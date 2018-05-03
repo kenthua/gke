@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: my-echo
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: echo
+    spec:
+      containers:
+      - name: echoserver
+        image: nicksardo/echoserver:latest
+        imagePullPolicy: Always
+        ports:
+        - name: echo-443
+          containerPort: 443
+        volumeMounts:
+        - name: prop-volume
+          mountPath: /opt/properties
+        - name: secret-volume
+          mountPath: /opt/secret
+          readOnly: true
+        env:
+        - name: SECRET_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: username
+        - name: SECRET_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: password
+        - name: DB_URL
+          valueFrom:
+            configMapKeyRef:
+              name: test-cm
+              key: db.url
+      volumes:
+        - name: prop-volume
+          configMap:
+            name: prop
+        - name: secret-volume
+          secret:
+            secretName: mysecret 

@@ -1,0 +1,11 @@
+=== Config Maps, Secrets
+
+A quick setup using config maps and secrets, mounted and configured as environment variables.
+
+[source,bash]
+----
+kubectl apply -f k8s/secret.yaml
+kubectl apply -f k8s/test-cm.yaml
+kubectl create cm prop --from-file props/
+kubectl apply -f k8s/app.yaml
+----
