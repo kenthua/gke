@@ -1,0 +1,50 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: app-busybox
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: app-busybox
+    spec:
+      containers:
+      - name: app
+        image: nicksardo/echoserver:latest
+        imagePullPolicy: Always
+        ports:
+        - name: echo-443
+          containerPort: 443
+        volumeMounts:
+        - name: workdir
+          mountPath: "/work-dir"
+      initContainers:
+      - name: init-vault-client
+        image: odise/busybox-curl
+        command: ["sh", "-c", "curl --cacert ${VAULT_CACERT} --header \"X-Vault-Token: ${VAULT_TOKEN}\" --request GET ${VAULT_ADDR}/v1/secret/data/my-secret > /work-dir/output.json" ]
+        volumeMounts:
+        - name: workdir
+          mountPath: "/work-dir"
+        - name: cacert-volume
+          mountPath: "/work-dir/ca"
+        env:
+        - name: VAULT_ADDR
+          valueFrom:
+            configMapKeyRef:
+              name: vault
+              key: vault_address
+        - name: VAULT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: vault-token-secret
+              key: VAULT_TOKEN
+        - name: VAULT_CACERT
+          value: /work-dir/ca/ca.pem
+      volumes:
+      - name: workdir
+        emptyDir: {}
+      - name: cacert-volume
+        secret:
+          secretName: cacert

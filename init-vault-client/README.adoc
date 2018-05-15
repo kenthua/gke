@@ -1,0 +1,63 @@
+= vault init client example
+
+== Prereq
+Run through https://github.com/kelseyhightower/vault-on-google-kubernetes-engine to setup your vault environment on GKE
+
+== Things you'll need
+
+You'll need your `ca.pem` from the prereq project which you will create a secret out of, you'll also need to create a token to auth into your vault environment for this example.  Ideally you'll want to setup your gcloud IAM auth with vault.
+
+== Generate your vault token
+
+[source,bash]
+----
+vault token create --display-name myapp
+
+# You will want the value of token
+Key                Value
+---                -----
+token              xxxxx
+...
+
+# Save the value of the token into the environment file
+echo -n "VAULT_TOKEN=<TOKEN_VALUE>" > secret.env
+
+----
+
+Modify the `configMap.yaml` to include the proper ip address of your k8s vault service
+
+[source,bash]
+----
+kubectl get svc vault-load-balancer -o jsonpath="{.spec.loadBalancerIP}"
+----
+
+
+Create the resources to be stored as secrets and configmaps.
+
+
+[source,bash]
+----
+kubectl create secret generic vault-token-secret --from-env secret.env
+kubectl create secret generic cacert --from-file ca.pem
+kubectl create -f configMap.yaml
+----
+
+Deploy the example of your choosing
+
+[source,bash]
+----
+# Using a busybox container and executing everything via command line
+kubectl create -f app-busybox.yaml
+----
+
+Create your `init-vault-client` container image
+Download the linux 64-bit vault client: https://www.vaultproject.io/downloads.html
+
+[source,bash]
+----
+gcloud container builds submit . --tag gcr.io/${PROJECT_ID}/kubernetes-vault-client
+
+# Update the container image location
+kubectl create -f app-custom-init.yaml
+
+----

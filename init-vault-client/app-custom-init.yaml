@@ -1,0 +1,49 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: app-custom-client
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: app-custom-client
+    spec:
+      containers:
+      - name: app
+        image: nicksardo/echoserver:latest
+        imagePullPolicy: Always
+        ports:
+        - name: echo-443
+          containerPort: 443
+        volumeMounts:
+        - name: workdir
+          mountPath: "/work-dir"
+      initContainers:
+      - name: init-vault-client
+        image: gcr.io/kenthua-istio/vault-client
+        volumeMounts:
+        - name: workdir
+          mountPath: "/work-dir"
+        - name: cacert-volume
+          mountPath: "/work-dir/ca"
+        env:
+        - name: VAULT_ADDR
+          valueFrom:
+            configMapKeyRef:
+              name: vault
+              key: vault_address
+        - name: VAULT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: vault-token-secret
+              key: VAULT_TOKEN
+        - name: VAULT_CACERT
+          value: /work-dir/ca/ca.pem
+      volumes:
+      - name: workdir
+        emptyDir: {}
+      - name: cacert-volume
+        secret:
+          secretName: cacert
