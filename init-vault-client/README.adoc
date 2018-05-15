@@ -5,7 +5,7 @@ Run through https://github.com/kelseyhightower/vault-on-google-kubernetes-engine
 
 == Things you'll need
 
-You'll need your `ca.pem` from the prereq project which you will create a secret out of, you'll also need to create a token to auth into your vault environment for this example.  Ideally you'll want to setup your gcloud IAM auth with vault.
+You'll need your `ca.pem` from the prereq project which you will create a secret out of, you'll also need to create a token to auth into your vault environment for this example.  In a more secure environment you will want to use your gcloud iam identities and set that up in vault.
 
 == Generate your vault token
 
@@ -24,7 +24,7 @@ echo -n "VAULT_TOKEN=<TOKEN_VALUE>" > secret.env
 
 ----
 
-Modify the `configMap.yaml` to include the proper ip address of your k8s vault service
+Modify the `configmap.yaml` to include the proper ip address of your k8s vault service
 
 [source,bash]
 ----
@@ -39,7 +39,7 @@ Create the resources to be stored as secrets and configmaps.
 ----
 kubectl create secret generic vault-token-secret --from-env secret.env
 kubectl create secret generic cacert --from-file ca.pem
-kubectl create -f configMap.yaml
+kubectl create -f configmap.yaml
 ----
 
 Deploy the example of your choosing
@@ -60,4 +60,14 @@ gcloud container builds submit . --tag gcr.io/${PROJECT_ID}/kubernetes-vault-cli
 # Update the container image location
 kubectl create -f app-custom-init.yaml
 
+----
+
+Once your container is up and running the contents of the example key will be in the work-dir of the container.
+[source,bash]
+----
+# busybox
+kubectl exec -it app-busybox-xxx cat /work-dir/output.json
+
+# custom vault
+kubectl exec -it app-custom-init cat /work-dir/output.yaml
 ----
