@@ -44,9 +44,10 @@ kubectl create -f configmap.yaml
 
 == Deploy the example of your choosing
 
+Using an alpine container with curl and execute everything via command
+
 [source,bash]
 ----
-# Using a alpine container with curl and execute everything via command line
 kubectl create -f app-alpine-curl.yaml
 ----
 
@@ -57,14 +58,14 @@ Download the linux 64-bit vault client: https://www.vaultproject.io/downloads.ht
 ----
 gcloud container builds submit . --tag gcr.io/${PROJECT_ID}/kubernetes-vault-client
 
-# Update the container image location
+# Update the container image location with your associated project
 kubectl create -f app-custom-init.yaml
-
 ----
 
 == Output
 
 Once your container is up and running the contents of the example key will be in the work-dir of the container.
+
 [source,bash]
 ----
 # busybox
