@@ -1,11 +1,15 @@
 = vault init client example
 
 == Prereq
-Run through https://github.com/kelseyhightower/vault-on-google-kubernetes-engine to setup your vault environment on GKE
+Run through https://github.com/kelseyhightower/vault-on-google-kubernetes-engine[this example] to setup your vault environment on GKE
 
 == Things you'll need
 
-You'll need your `ca.pem` from the prereq project which you will create a secret out of, you'll also need to create a token to auth into your vault environment for this example.  In a more secure environment you will want to use your gcloud iam identities and set that up in vault.
+* `ca.pem` from the prereq project which you will create a secret out of
+* Create a token to auth into your vault environment for this example.  i
+[NOTE] In a more secure environment you will want to use your gcloud iam identities and set that up in vault.  This will change your approach to the init-container type you use to properly perform auth
+* https://www.vaultproject.io/downloads.html[vault client]
+
 
 == Generate your vault token
 
@@ -53,7 +57,7 @@ kubectl create -f app-alpine-curl.yaml
 ----
 
 Create your `init-vault-client` container image
-Download the linux 64-bit vault client: https://www.vaultproject.io/downloads.html
+The `Dockerfile` needs the vault client
 
 [source,bash]
 ----
