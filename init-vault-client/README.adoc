@@ -6,10 +6,10 @@ Run through https://github.com/kelseyhightower/vault-on-google-kubernetes-engine
 == Things you'll need
 
 * `ca.pem` from the prereq project which you will create a secret out of
-* Create a token to auth into your vault environment for this example.  i
-[NOTE] In a more secure environment you will want to use your gcloud iam identities and set that up in vault.  This will change your approach to the init-container type you use to properly perform auth
 * https://www.vaultproject.io/downloads.html[vault client]
+* Create a token to auth into your vault environment for this example. 
 
+NOTE: In a more secure environment you will want to use your gcloud iam identities and set that up in vault.  This will change your approach to the init-container type you use to properly perform auth
 
 == Generate your vault token
 
@@ -36,9 +36,7 @@ export LOAD_BALANCER_IP=kubectl get svc vault-load-balancer -o jsonpath="{.spec.
 sed -i "s/##LOAD_BALANCER_IP##/${LOAD_BALANCER_IP}/g" configmap.yaml 
 ----
 
-
 Create the resources to be stored as secrets and configmaps.
-
 
 [source,bash]
 ----
@@ -56,8 +54,7 @@ Using an alpine container with curl and execute everything via command
 kubectl create -f app-alpine-curl.yaml
 ----
 
-Create your `init-vault-client` container image
-The `Dockerfile` needs the vault client
+Create your `init-vault-client` container image.  The `Dockerfile` needs the vault client.
 
 [source,bash]
 ----
