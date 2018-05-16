@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: vault
 data:
-  vault_address: "https://{LOAD_BALANCER_IP}:8200"
+  vault_address: "https://##LOAD_BALANCER_IP##:8200"

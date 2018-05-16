@@ -28,7 +28,8 @@ Modify the `configmap.yaml` to include the proper ip address of your k8s vault s
 
 [source,bash]
 ----
-kubectl get svc vault-load-balancer -o jsonpath="{.spec.loadBalancerIP}"
+export LOAD_BALANCER_IP=kubectl get svc vault-load-balancer -o jsonpath="{.spec.loadBalancerIP}"
+sed -i "s/##LOAD_BALANCER_IP##/${LOAD_BALANCER_IP}/g" configmap.yaml 
 ----
 
 
