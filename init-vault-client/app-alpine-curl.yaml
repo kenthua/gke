@@ -2,13 +2,13 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: app-busybox
+  name: app-alpine-curl
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: app-busybox
+        app: app-alpine-curl
     spec:
       containers:
       - name: app
@@ -22,7 +22,7 @@ spec:
           mountPath: "/work-dir"
       initContainers:
       - name: init-vault-client
-        image: odise/busybox-curl
+        image: gcr.io/kenthua-sharing/alpine-curl:latest
         command: ["sh", "-c", "curl --cacert ${VAULT_CACERT} --header \"X-Vault-Token: ${VAULT_TOKEN}\" --request GET ${VAULT_ADDR}/v1/secret/data/my-secret > /work-dir/output.json" ]
         volumeMounts:
         - name: workdir

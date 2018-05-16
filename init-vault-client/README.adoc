@@ -46,8 +46,8 @@ Deploy the example of your choosing
 
 [source,bash]
 ----
-# Using a busybox container and executing everything via command line
-kubectl create -f app-busybox.yaml
+# Using a alpine container with curl and execute everything via command line
+kubectl create -f app-alpine-curl.yaml
 ----
 
 Create your `init-vault-client` container image
