@@ -42,7 +42,7 @@ kubectl create secret generic cacert --from-file ca.pem
 kubectl create -f configmap.yaml
 ----
 
-Deploy the example of your choosing
+== Deploy the example of your choosing
 
 [source,bash]
 ----
@@ -61,6 +61,8 @@ gcloud container builds submit . --tag gcr.io/${PROJECT_ID}/kubernetes-vault-cli
 kubectl create -f app-custom-init.yaml
 
 ----
+
+== Output
 
 Once your container is up and running the contents of the example key will be in the work-dir of the container.
 [source,bash]
