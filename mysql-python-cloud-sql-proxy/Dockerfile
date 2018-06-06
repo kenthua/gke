@@ -1,4 +1,6 @@
-FROM python
+FROM python:alpine
+
+RUN apk add --update mariadb-dev libc-dev gcc
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app

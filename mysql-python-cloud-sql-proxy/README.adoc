@@ -6,6 +6,13 @@ Tested on istio 0.8.0 and gke 1.10
 == Create GKE cluster
 Install istio, no automatic sidecar injection
 
+
+== Build the sample container image
+[source,bash]
+----
+gcloud container builds submit . --tag gcr.io/kenthua-testing/python-mysql
+----
+
 == Create and Configure a Cloud SQL instance
 This will configure a service account, appropriate secretsa and modifications to your existing k8s Deployment manifest
 
@@ -46,19 +53,19 @@ NOTE: Verify the Cloud SQL `INSTANCE_CONNECTION_NAME` is correct in `deploy.yaml
 Inject the sidecar and annotations into the app deploy yaml  
 [source,bash]
 ----
-istioctl kube-inject -f deploy.yaml --injectConfigFile inject-config.yaml -o deploy-injected.yaml
+istioctl kube-inject -f k8s/deploy.yaml --injectConfigFile k8s/inject-config.yaml -o k8s/deploy-injected.yaml
 ----
 
 Deploy your config
 [source,bash]
 ----
-kubectl apply -f deploy-injected.yaml
+kubectl apply -f k8s/deploy-injected.yaml
 ----
 
 Instead of generating the `deploy-injected.yaml` and doing an apply after, it can be done with one command
 [source,bash]
 ----
-kubectl apply -f <(istioctl kube-inject -f deploy.yaml --injectConfigFile inject-config.yaml)
+kubectl apply -f <(istioctl kube-inject -f k8s/deploy.yaml --injectConfigFile k8s/inject-config.yaml)
 ----
 
 === References
