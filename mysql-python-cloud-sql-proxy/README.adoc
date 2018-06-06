@@ -7,12 +7,17 @@ Tested on istio 0.8.0 and gke 1.10
 Install istio, no automatic sidecar injection
 
 == Create and Configure a Cloud SQL instance
-https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine
+This will configure a service account, appropriate secretsa and modifications to your existing k8s Deployment manifest
+
+https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine[Follow these instructions]
 
 Create a database that will match MYSQL_DB_NAME
 
-https://istio.io/docs/tasks/traffic-management/egress/#calling-external-services-directly
---includeIPRanges is deprecated, use --injectConfigFile
+Bypass the istio egress mechanism by specifying to only include the cluster related range.
+
+https://istio.io/docs/tasks/traffic-management/egress/#calling-external-services-directly[Details here]
+
+NOTE: `--includeIPRanges` is deprecated, use `--injectConfigFile`, so to do that we have to extract the config as shown below
 
 Extract istio sidecar config 
 [source,bash]
@@ -20,7 +25,7 @@ Extract istio sidecar config
 kubectl -n istio-system get configmap istio-sidecar-injector -o=jsonpath='{.data.config}' > inject-config.yaml
 ----
 
-Get ip ranges
+Get Cluster IP ranges
 [source,bash]
 ----
 gcloud container clusters describe XXXXXXX --zone=XXXXXX | grep -e clusterIpv4Cidr -e servicesIpv4Cidr
@@ -28,9 +33,11 @@ gcloud container clusters describe XXXXXXX --zone=XXXXXX | grep -e clusterIpv4Ci
 
 Modify inject-config.yaml to include the two ip ranges
 `traffic.sidecar.istio.io/includeOutboundIPRanges`
-Change * to the two IP ranges
+Change `*` to the two IP ranges, i.e. `10.44.0.0/14,10.47.240.0/20`
 
-Inject the sidecar and annotations into the app deploy yaml
+This will essentially add the config to the istio-proxy initContainer config.
+
+Inject the sidecar and annotations into the app deploy yaml  
 [source,bash]
 ----
 istioctl kube-inject -f deploy.yaml --injectConfigFile inject-config.yaml -o deploy-injected.yaml
@@ -42,5 +49,11 @@ Deploy your config
 kubectl apply -f deploy-injected.yaml
 ----
 
-References
-* https://github.com/DaoCloud/python-mysql-sample[Base Example]
+Instead of generating the `deploy-injected.yaml` and doing an apply after, it can be done with one command
+[source,bash]
+----
+kubectl apply -f <(istioctl kube-inject -f deploy.yaml --injectConfigFile inject-config.yaml)
+
+
+=== References
+https://github.com/DaoCloud/python-mysql-sample[Base Example]
