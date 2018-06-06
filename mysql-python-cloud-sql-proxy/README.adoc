@@ -53,7 +53,7 @@ Instead of generating the `deploy-injected.yaml` and doing an apply after, it ca
 [source,bash]
 ----
 kubectl apply -f <(istioctl kube-inject -f deploy.yaml --injectConfigFile inject-config.yaml)
-
+----
 
 === References
 https://github.com/DaoCloud/python-mysql-sample[Base Example]
