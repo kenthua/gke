@@ -1,0 +1,31 @@
+=== Istio - Cloud SQL Proxy
+Sample python application with mysql client to connect to Cloud SQL via Cloud SQL Proxy
+
+Create GKE cluster
+Install istio, no automatic sidecar injection
+
+https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine
+Create a database that will match MYSQL_DB_NAME
+
+https://istio.io/docs/tasks/traffic-management/egress/#calling-external-services-directly
+--includeIPRanges is deprecated, use --injectConfigFile
+
+Extract istio sidecar config 
+kubectl -n istio-system get configmap istio-sidecar-injector -o=jsonpath='{.data.config}' > inject-config.yaml
+
+Get ip ranges
+gcloud container clusters describe XXXXXXX --zone=XXXXXX | grep -e clusterIpv4Cidr -e servicesIpv4Cidr
+
+Modify inject-config.yaml to include the two ip ranges
+traffic.sidecar.istio.io/includeOutboundIPRanges
+Change * to the two IP ranges
+
+Inject the sidecar and annotations into the app deploy yaml
+istioctl kube-inject -f deploy.yaml --injectConfigFile inject-config.yaml -o deploy-injected.yaml
+
+Deploy your config
+kubectl apply -f deploy-injected.yaml
+
+
+
+

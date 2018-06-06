@@ -1,0 +1,6 @@
+nose
+coverage
+Flask
+#MySQL-python
+mysqlclient
+#mysql-connector-c
