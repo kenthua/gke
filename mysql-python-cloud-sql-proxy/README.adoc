@@ -13,6 +13,8 @@ https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine[Follow these i
 
 Create a database that will match MYSQL_DB_NAME
 
+== Configure app and istio 
+
 Bypass the istio egress mechanism by specifying to only include the cluster related range.
 
 https://istio.io/docs/tasks/traffic-management/egress/#calling-external-services-directly[Details here]
@@ -36,6 +38,8 @@ Modify inject-config.yaml to include the two ip ranges
 Change `*` to the two IP ranges, i.e. `10.44.0.0/14,10.47.240.0/20`
 
 This will essentially add the config to the istio-proxy initContainer config.
+
+== Deploy
 
 Inject the sidecar and annotations into the app deploy yaml  
 [source,bash]
