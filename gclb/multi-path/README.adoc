@@ -1,0 +1,25 @@
+= Ingress with multiple URIs pointing to different services
+In this example we have a service that listens on multiple URIs and the ingress manifest points to different services
+
+== Build your container
+[source,bash]
+----
+gcloud container builds submit . --tag gcr.io/kenthua-testing/python-web
+----
+
+== Deploy the manifests
+[source,bash]
+----
+kubectl apply -f k8s
+----
+
+== Test your deployment
+[source,bash]
+----
+# check to see when an IP appears
+watch kubectl get ing
+
+IP=`kubectl get ing service-ing -ojsonpath='{.status.loadBalancer.ingress[0].ip}'`
+curl $IP/service1
+curl $IP/service2
+----

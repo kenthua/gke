@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: service-ing
+  labels:
+    app: service  
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /service1
+        backend:
+          serviceName: service1
+          servicePort: http
+      - path: /service2
+        backend:
+          serviceName: service2
+          servicePort: http
+
