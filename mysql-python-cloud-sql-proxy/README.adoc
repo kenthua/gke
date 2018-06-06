@@ -28,4 +28,5 @@ kubectl apply -f deploy-injected.yaml
 
 
 
-
+References
+https://github.com/DaoCloud/python-mysql-sample[Base Example]
