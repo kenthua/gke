@@ -41,6 +41,8 @@ This will essentially add the config to the istio-proxy initContainer config.
 
 == Deploy
 
+NOTE: Verify the Cloud SQL `INSTANCE_CONNECTION_NAME` is correct in `deploy.yaml` for the `command` of the `cloudsql-proxy` container.
+
 Inject the sidecar and annotations into the app deploy yaml  
 [source,bash]
 ----
