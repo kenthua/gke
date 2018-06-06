@@ -1,6 +1,8 @@
 === Istio - Cloud SQL Proxy
 Sample python application with mysql client to connect to Cloud SQL via Cloud SQL Proxy
 
+Tested on istio 0.8.0 and gke 1.10
+
 Create GKE cluster
 Install istio, no automatic sidecar injection
 
