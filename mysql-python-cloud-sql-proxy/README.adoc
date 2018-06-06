@@ -56,4 +56,4 @@ kubectl apply -f <(istioctl kube-inject -f deploy.yaml --injectConfigFile inject
 ----
 
 === References
-https://github.com/DaoCloud/python-mysql-sample[Base Example]
+https://github.com/DaoCloud/python-mysql-sample[Base python mysql app example]
