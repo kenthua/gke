@@ -24,4 +24,4 @@ curl $IP/service1
 curl $IP/service2
 ----
 
-NOTE: This https://github.com/kubernetes/ingress-gce/blob/master/examples/https/tls-app.yaml[example] can be used as well.  However, when setting paths for each backend, you need to use $$`/service1/*`$$ and $$`/service2/*`$$ so that it resolves properly.  Using this image: `gcr.io/google_containers/echoserver:1.3`
+NOTE: This https://github.com/kubernetes/ingress-gce/blob/master/examples/https/tls-app.yaml[example] can be used as well.  However, when setting paths for each backend, you need to use $$/service1/*$$ and $$/service2/*$$ so that it resolves properly.  Using this image: `gcr.io/google_containers/echoserver:1.3`
