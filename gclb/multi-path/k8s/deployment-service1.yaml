@@ -25,7 +25,7 @@ spec:
         version: v1
     spec:
       containers:
-      - image: gcr.io/kenthua-testing/python-web
+      - image: gcr.io/kenthua-sharing/python-web-service
         imagePullPolicy: Always
         name: service1
         ports:

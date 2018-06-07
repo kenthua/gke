@@ -4,7 +4,7 @@ In this example we have a service that listens on multiple URIs and the ingress 
 == Build your container
 [source,bash]
 ----
-gcloud container builds submit . --tag gcr.io/kenthua-testing/python-web
+gcloud container builds submit . --tag gcr.io/kenthua-sharing/python-web-service
 ----
 
 == Deploy the manifests
