@@ -1,4 +1,5 @@
 = Ingress with multiple URIs pointing to different services
+
 In this example we have a service that listens on multiple URIs and the ingress manifest points to different services
 
 Tested on gke 1.10.4-gke.0, istio 0.8
@@ -33,7 +34,7 @@ NOTE: This https://github.com/kubernetes/ingress-gce/blob/master/examples/https/
 
 == Istio 
 
-[NOTE] If you choose to leverage istio, you do not need to create the k8s ingress, `service-ingress.yaml`
+NOTE: If you choose to leverage istio, you do not need to create the k8s ingress, `service-ingress.yaml`
 
 === Set your gateway details
 https://istio.io/docs/tasks/traffic-management/ingress/#determining-the-ingress-ip-and-ports-for-a-load-balancer-ingress-gateway[Source instructions here]
@@ -53,6 +54,7 @@ istioctl create -f istio/virtualservice.yaml
 istioctl create -f istio/destinationrule.yaml
 ----
 
-[NOTE] 
+[NOTE]
+====
 - There is a 1:1 host mapping between the istio `Gateway` and `VirtualService`.  As you'll see in the `VirtualService` yaml, the two services are defined in the single virtual service. https://github.com/istio/istio/issues/5006[istio issue discussion]
 - If you created your istio environment with auth / mTLS Auth enabled, you will need the `ISTIO_MUTUAL` traffic policy mode defined.  Otherwise access to the service will be denied.
