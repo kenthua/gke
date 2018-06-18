@@ -51,10 +51,8 @@ export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
 ----
 istioctl create -f istio/gateway.yaml
 istioctl create -f istio/virtualservice.yaml
-istioctl create -f istio/destinationrule.yaml
 ----
 
 [NOTE]
 ====
 - There is a 1:1 host mapping between the istio `Gateway` and `VirtualService`.  As you'll see in the `VirtualService` yaml, the two services are defined in the single virtual service. https://github.com/istio/istio/issues/5006[istio issue discussion]
-- If you created your istio environment with auth / mTLS Auth enabled, you will need the `ISTIO_MUTUAL` traffic policy mode defined.  Otherwise access to the service will be denied.
