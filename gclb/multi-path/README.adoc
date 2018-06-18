@@ -1,19 +1,23 @@
 = Ingress with multiple URIs pointing to different services
 In this example we have a service that listens on multiple URIs and the ingress manifest points to different services
 
-== Build your container
+Tested on gke 1.10.4-gke.0, istio 0.8
+
+== Setup / Run
+
+=== Build your container
 [source,bash]
 ----
 gcloud container builds submit . --tag gcr.io/kenthua-sharing/python-web-service
 ----
 
-== Deploy the manifests
+=== Deploy the manifests
 [source,bash]
 ----
 kubectl apply -f k8s
 ----
 
-== Test your deployment
+=== Test your deployment
 [source,bash]
 ----
 # check to see when an IP appears
@@ -25,3 +29,30 @@ curl $IP/service2
 ----
 
 NOTE: This https://github.com/kubernetes/ingress-gce/blob/master/examples/https/tls-app.yaml[example] can be used as well.  However, when setting paths for each backend, you need to use $$/service1/*$$ and $$/service2/*$$ so that it resolves properly.  Using this image: `gcr.io/google_containers/echoserver:1.3`
+
+
+== Istio 
+
+[NOTE] If you choose to leverage istio, you do not need to create the k8s ingress, `service-ingress.yaml`
+
+=== Set your gateway details
+https://istio.io/docs/tasks/traffic-management/ingress/#determining-the-ingress-ip-and-ports-for-a-load-balancer-ingress-gateway[Source instructions here]
+[source,bash]
+----
+export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http")].port}')
+export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].port}')
+export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+----
+
+=== Create the istio related manifests for the services
+[source,bash]
+----
+istioctl create -f istio/gateway.yaml
+istioctl create -f istio/virtualservice.yaml
+istioctl create -f istio/destinationrule.yaml
+----
+
+[NOTE] 
+- There is a 1:1 host mapping between the istio `Gateway` and `VirtualService`.  As you'll see in the `VirtualService` yaml, the two services are defined in the single virtual service. https://github.com/istio/istio/issues/5006[istio issue discussion]
+- If you created your istio environment with auth / mTLS Auth enabled, you will need the `ISTIO_MUTUAL` traffic policy mode defined.  Otherwise access to the service will be denied.
