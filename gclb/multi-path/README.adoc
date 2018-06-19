@@ -56,3 +56,12 @@ istioctl create -f istio/virtualservice.yaml
 [NOTE]
 ====
 - There is a 1:1 host mapping between the istio `Gateway` and `VirtualService`.  As you'll see in the `VirtualService` yaml, the two services are defined in the single virtual service. https://github.com/istio/istio/issues/5006[istio issue discussion]
+
+====
+
+=== Testing
+[source,bash]
+----
+curl $GATEWAY_URL/service1
+curl $GATEWAY_URL/service2
+----
