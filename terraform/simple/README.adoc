@@ -1,0 +1,1 @@
+- This variation deploys a simple cluster, disabled default nodepool and an additional nodepool for workload.

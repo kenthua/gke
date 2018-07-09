@@ -1,12 +1,10 @@
-= GKE & Terraform Quickstart
+= GKE Private Clusters & Terraform Quickstart
 
 == How to get started
 
 - Get the terraform https://www.terraform.io/downloads.html[binary]
 - Details are noted in the https://blog.kenthua.com/2018/06/25/gke-and-terraform-quickstart/[blog]
-- Check out the different variations
-  - simple
-  - private-clsuter
+- This variation deploys a private cluster
 
 == File modifications
 Modify `terraform.tfvars` and `connections.tf` to based on your environment and preferences.
