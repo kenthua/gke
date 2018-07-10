@@ -4,9 +4,9 @@ resource "google_compute_network" "network0" {
 }
 
 resource "google_compute_subnetwork" "subnet0" {
-  name          = "${google_compute_network.network0.self_link}"
+  name          = "${var.subnetwork}"
   region        = "${var.region}"
-  network       = "${var.network}"
+  network       = "${google_compute_network.network0.self_link}"
   ip_cidr_range = "${var.subnetwork_ip_range}"
 
   secondary_ip_range = {
