@@ -1,4 +1,3 @@
-
 data "google_project" "host_project" {
   project_id = "${var.host_project}"
 }
@@ -8,7 +7,7 @@ data "google_project" "service_project" {
 }
 
 data "google_compute_zones" "available" {
-    project                  = "${var.service_project}"
+  project = "${var.service_project}"
 }
 
 resource "google_container_cluster" "cluster0" {

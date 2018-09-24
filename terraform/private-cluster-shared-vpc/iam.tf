@@ -13,6 +13,6 @@ resource "google_project_iam_binding" "compute-networkuser" {
 
   members = [
     "serviceAccount:${data.google_project.service_project.number}@cloudservices.gserviceaccount.com",
-    "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com"
+    "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com",
   ]
 }

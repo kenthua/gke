@@ -1,11 +1,11 @@
 resource "google_compute_network" "network0" {
-  project                  = "${var.host_project}"
+  project                 = "${var.host_project}"
   name                    = "${var.network}"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "subnet0" {
-  project                  = "${var.host_project}"
+  project       = "${var.host_project}"
   name          = "${var.subnetwork}"
   region        = "${var.region}"
   network       = "${google_compute_network.network0.self_link}"
@@ -40,3 +40,4 @@ resource "google_compute_subnetwork" "subnet0" {
   depends_on = ["google_compute_subnetwork.subnet0"]
 }
 */
+

@@ -22,7 +22,6 @@ variable "service_project" {
   description = "The ID of the Google Cloud project"
 }
 
-
 variable "master_ip_range" {
   default = "172.16.0.0/28"
 }
