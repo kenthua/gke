@@ -51,7 +51,7 @@ resource "google_container_cluster" "cluster0" {
   lifecycle {
     ignore_changes = ["node_pool", "node_version", "network"]
   }
-  depends_on = ["google_project_iam_member.host_service_agent", "google_project_iam_binding.compute-networkuser", "google_compute_subnetwork.subnet0"]
+  depends_on = ["google_project_iam_member.host_service_agent", "google_compute_subnetwork_iam_member.subnet-container", "google_compute_subnetwork.subnet0"]
 }
 
 resource "google_container_node_pool" "nodepool0" {

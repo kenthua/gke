@@ -1,6 +1,6 @@
-host_project = "host"
+host_project = "kenthua-altostrat-host"
 
-service_project = "service"
+service_project = "kenthua-altostrat-service"
 
 kubernetes_version = "1.10"
 

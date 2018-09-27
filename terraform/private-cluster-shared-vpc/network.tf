@@ -25,19 +25,23 @@ resource "google_compute_subnetwork" "subnet0" {
 }
 
 /*
-* Cannot do this yet because, can't specify etag
-*/
-/*resource "google_compute_subnetwork_iam_binding" "subnet" {
+resource "google_compute_subnetwork_iam_member" "subnet-cloudservices" {
   project = "${var.host_project}"
   subnetwork = "${var.subnetwork}"
   role       = "roles/compute.networkUser"
 
-  members = [
-    "serviceAccount:${data.google_project.service_project.number}@cloudservices.gserviceaccount.com",
-    "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com"
-  ]
+  member = "serviceAccount:${data.google_project.service_project.number}@cloudservices.gserviceaccount.com"
 
-  depends_on = ["google_compute_subnetwork.subnet0"]
+  depends_on = ["google_compute_subnetwork_iam_member.subnet-container"]
 }
 */
 
+resource "google_compute_subnetwork_iam_member" "subnet-container" {
+  project = "${var.host_project}"
+  subnetwork = "${var.subnetwork}"
+  role       = "roles/compute.networkUser"
+
+  member = "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com"
+  
+  depends_on = ["google_compute_subnetwork.subnet0"]
+}
