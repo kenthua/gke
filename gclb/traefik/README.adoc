@@ -1,0 +1,70 @@
+= Traefik
+
+In this example we deploy the traefik ingress controller as a deployment.  The alternative is a daemonset.  This was built with GKE as a private cluster.
+
+Tested on gke 1.10.7-gke.6
+
+== Setup / Run
+
+=== Make sure you have the proper role bindings
+[source,bash]
+----
+kubectl create clusterrolebinding cluster-admin-binding \
+    --clusterrole=cluster-admin \
+    --user=$(gcloud config get-value core/account)
+----
+
+NOTE: If you haven't, you ideally want to disable your http load balancer (GCLB) in a private cluster.
+[source,bash]
+----
+gcloud container clusters update $CLUSTER_NAME \
+    --region $CLUSTER_REGION \
+    --update-addons=HttpLoadBalancing=DISABLED
+----
+
+
+=== Setup your traefik ingress controller instance
+[source,bash]
+----
+# apply the ClusterRole and ClusterRoleBinding for traefik
+kubectl apply -f traefik-rbac.yaml
+# deploy the serviceaccount, deployment and service
+kubectl apply -f traefik-deployment.yaml
+----
+
+=== Setup the example httpbin application
+[source,bash]
+----
+# setup the httpbin deployment and service
+kubectl apply -f httpbin.yaml
+----
+
+=== Deploy an https ingress
+[source,bash]
+----
+kubectl apply -f httpbin-tls.yaml
+kubectl apply -f httpbin-ingress-tls.yaml
+----
+
+=== Alternatively, deploy an http version
+[source,bash]
+----
+kubectl apply -f httpbin-ingress.yaml
+----
+
+=== Test your instance
+[source,bash]
+----
+# get the IP
+IP=$(kubectl get svc traefik-ingress-service -n kube-system -ojsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+# Testing https
+curl -k -v -H "Host: httpbin.services.fluffycloud.online" https://$IP
+----
+
+[NOTE]
+----
+The test above will get to the page, but you will be presented with the default traefik tls certificate (`CN=TRAEFIK DEFAULT CERT`).  To get the actual certificate, you have to create the DNS entry or modify your host file to point to the traefik ingress service external IP (`$IP`).  You can change this cert in as an https://docs.traefik.io/configuration/entrypoints/#all-available-options[argument] if you choose.
+----
+
+

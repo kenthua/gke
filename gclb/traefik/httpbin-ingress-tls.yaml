@@ -1,0 +1,21 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    app: httpbin    
+  name: httpbin-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/frontend-entry-points: https
+spec:
+  tls:
+  - secretName: httpbin-tls
+  rules: 
+  - host: httpbin.services.fluffycloud.online 
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: httpbin
+          servicePort: http
