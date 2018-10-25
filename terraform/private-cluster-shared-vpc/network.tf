@@ -36,6 +36,7 @@ resource "google_compute_subnetwork_iam_member" "subnet-cloudservices" {
 }
 */
 
+/*
 resource "google_compute_subnetwork_iam_member" "subnet-container" {
   project = "${var.host_project}"
   subnetwork = "${var.subnetwork}"
@@ -45,3 +46,4 @@ resource "google_compute_subnetwork_iam_member" "subnet-container" {
   
   depends_on = ["google_compute_subnetwork.subnet0"]
 }
+*/

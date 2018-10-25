@@ -7,7 +7,6 @@ resource "google_project_iam_member" "host_service_agent" {
 /*
 * Seems to be a workaround for the google_compute_subnetwork_iam_binding 
 */
-/*
 resource "google_project_iam_binding" "compute-networkuser" {
   project = "${var.host_project}"
   role    = "roles/compute.networkUser"
@@ -17,4 +16,3 @@ resource "google_project_iam_binding" "compute-networkuser" {
     "serviceAccount:service-${data.google_project.service_project.number}@container-engine-robot.iam.gserviceaccount.com",
   ]
 }
-*/
