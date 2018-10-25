@@ -63,8 +63,8 @@ curl -k -v -H "Host: httpbin.services.fluffycloud.online" https://$IP
 ----
 
 [NOTE]
-----
+====
 The test above will get to the page, but you will be presented with the default traefik tls certificate (`CN=TRAEFIK DEFAULT CERT`).  To get the actual certificate, you have to create the DNS entry or modify your host file to point to the traefik ingress service external IP (`$IP`).  You can change this cert in as an https://docs.traefik.io/configuration/entrypoints/#all-available-options[argument] if you choose.
-----
+====
 
 
