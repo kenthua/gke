@@ -36,16 +36,13 @@ spec:
         - name: admin
           containerPort: 8080
         args:
-        - --api
-        - --loglevel=DEBUG
+        - --api=true
         - --defaultentrypoints=http,https
         - --entrypoints=Name:http Address::80
         - --entrypoints=Name:https Address::443 TLS Compress:true
         - --kubernetes=true
         - --kubernetes.watch=true
         - --web=true
-        - --web.readonly
-        - --web.address=:8080
 ---
 kind: Service
 apiVersion: v1
