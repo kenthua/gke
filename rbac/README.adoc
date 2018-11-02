@@ -19,7 +19,7 @@ EOF
 ```
 gcloud iam roles create $ROLE_ID --project $PROJECT_ID --file iam-gke-dev-minimal.yaml
 
-gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:test-staging@kenthua-testing.iam.gserviceaccount.com --role=projects/kenthua-testing/roles/gkedevminimal
+gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:test-staging@kenthua-testing.iam.gserviceaccount.com --role=projects/$PROJECT_ID/roles/$ROLE_ID
 
 gcloud config set account test-staging@kenthua-testing.iam.gserviceaccount.com
 
