@@ -28,8 +28,6 @@ title: GKE Developer Minimal
 description: Limited Role for GKE Developer, to get cluster credentials
 stage: GA
 includedPermissions:
-- container.apiServices.get
-- container.apiServices.list
 - container.clusters.get
 EOF
 ----
@@ -39,7 +37,7 @@ Create the role with the manifest created above.  The $MEMBER variable should re
 [source,bash]
 ----
 PROJECT_ID=<YOUR_PROJECT_ID>
-ROLE_ID=gkedevminimal
+ROLE_ID=gkedevmin
 MEMBER=serviceAccount:test-staging@kenthua-testing.iam.gserviceaccount.com
 
 gcloud iam roles create $ROLE_ID --project $PROJECT_ID --file iam-gke-dev-minimal.yaml
