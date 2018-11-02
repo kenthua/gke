@@ -1,5 +1,8 @@
+```
 gcloud container clusters get-credentials test --zone us-central1-a
+```
 
+```
 PROJECT_ID=kenthua-testing
 ROLE_ID=gkedevminimal
 cat <<EOF > iam-gke-dev-minimal.yaml
@@ -11,7 +14,9 @@ includedPermissions:
 - container.apiServices.list
 - container.clusters.get
 EOF
+```
 
+```
 gcloud iam roles create $ROLE_ID --project $PROJECT_ID --file iam-gke-dev-minimal.yaml
 
 gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:test-staging@kenthua-testing.iam.gserviceaccount.com --role=projects/kenthua-testing/roles/gkedevminimal
@@ -19,9 +24,12 @@ gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:test-
 gcloud config set account test-staging@kenthua-testing.iam.gserviceaccount.com
 
 gcloud container clusters get-credentials test --zone us-central1-a
+```
 
+```
 kubectl get po
 Error from server (Forbidden): pods is forbidden: User "test-staging@kenthua-testing.iam.gserviceaccount.com" cannot list pods in the namespace "default": Required "container.pods.list" permission.
 
 kubectl get po -n dev
 No resources found.
+```
