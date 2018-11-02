@@ -1,10 +1,25 @@
-```
-gcloud container clusters get-credentials test --zone us-central1-a
-```
+= GKE IAM & RBAC
 
-```
-PROJECT_ID=kenthua-testing
-ROLE_ID=gkedevminimal
+A GKE cluster at the moment only factors GCP IAM roles at the cluster level and only `kind: User` in the `RoleBinding` `subjects`.  The GKE predefined roles provide access at a cluster level.  
+
+What if there are individual users who need access to the cluster and may only operate on specific namespaces as defined in your rolebindings.  One method is to create a custome role with limited permissions.  Enough access to execute the `gcloud container clusters get-credentials` command.
+
+== Setup the namespace
+
+Modify the `pod-readers-rolebinding.yaml` user with your test user.  Then apply the yamls in `dev`.
+
+NOTE: Before executing this command, your GKE cluster account will need access to modify roles, such as `cluster-admin`.
+
+[source,bash]
+----
+kubectl apply -f dev/
+----
+NOTE: You may need to apply it twice as the roles can only be created after the namespace has been created.
+
+Login/Set your GCP account to one that has permissions to manipulate roles.  This will create a custom role yaml manifest with permissions for a minimal role for a user that can `get-credentials` for a cluster.
+
+[source,bash]
+----
 cat <<EOF > iam-gke-dev-minimal.yaml
 title: GKE Developer Minimal
 description: Limited Role for GKE Developer, to get cluster credentials
@@ -14,22 +29,32 @@ includedPermissions:
 - container.apiServices.list
 - container.clusters.get
 EOF
-```
+----
 
-```
+Create the role with the manifest created above.  The $MEMBER variable should reference the user/service account specified in the rolebinding.
+
+[source,bash]
+----
+PROJECT_ID=<YOUR_PROJECT_ID>
+ROLE_ID=gkedevminimal
+MEMBER=serviceAccount:test-staging@kenthua-testing.iam.gserviceaccount.com
+
 gcloud iam roles create $ROLE_ID --project $PROJECT_ID --file iam-gke-dev-minimal.yaml
 
-gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:test-staging@kenthua-testing.iam.gserviceaccount.com --role=projects/$PROJECT_ID/roles/$ROLE_ID
+gcloud projects add-iam-policy-binding $PROJECT_ID --member $MEMBER --role=projects/$PROJECT_ID/roles/$ROLE_ID
 
-gcloud config set account test-staging@kenthua-testing.iam.gserviceaccount.com
+gcloud config set account $MEMBER
 
 gcloud container clusters get-credentials test --zone us-central1-a
-```
+----
 
-```
+[source,bash]
+----
 kubectl get po
 Error from server (Forbidden): pods is forbidden: User "test-staging@kenthua-testing.iam.gserviceaccount.com" cannot list pods in the namespace "default": Required "container.pods.list" permission.
 
 kubectl get po -n dev
 No resources found.
-```
+----
+
+Note the permission to the `dev` namespace, but not the `default` namespace.
