@@ -4,6 +4,9 @@ A GKE cluster at the moment only factors GCP IAM roles at the cluster level and 
 
 What if there are individual users who need access to the cluster and may only operate on specific namespaces as defined in your rolebindings.  One method is to create a custome role with limited permissions.  Enough access to execute the `gcloud container clusters get-credentials` command.
 
+Tested on GKE 1.9.7
+
+
 == Setup the namespace
 
 Modify the `pod-readers-rolebinding.yaml` user with your test user.  Then apply the yamls in `dev`.
