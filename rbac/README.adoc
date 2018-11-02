@@ -59,3 +59,14 @@ No resources found.
 ----
 
 Note the permission to the `dev` namespace, but not the `default` namespace.
+
+You can also use kubectl's auth checker
+
+[source,bash]
+----
+kubectl auth can-i get po -n dev
+yes
+
+kubectl auth can-i get po
+no - Required "container.pods.get" permission.
+----
