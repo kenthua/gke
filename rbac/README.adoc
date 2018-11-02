@@ -23,9 +23,9 @@ Login/Set your GCP account to one that has permissions to manipulate roles.  Thi
 
 [source,bash]
 ----
-cat <<EOF > iam-gke-dev-minimal.yaml
-title: GKE Developer Minimal
-description: Limited Role for GKE Developer, to get cluster credentials
+cat <<EOF > iam-gke-auth-minimal.yaml
+title: GKE Auth Minimal
+description: Limited Role for GKE Auth, to get cluster credentials
 stage: GA
 includedPermissions:
 - container.clusters.get
@@ -40,7 +40,7 @@ PROJECT_ID=<YOUR_PROJECT_ID>
 ROLE_ID=gkedevmin
 MEMBER=serviceAccount:test-staging@kenthua-testing.iam.gserviceaccount.com
 
-gcloud iam roles create $ROLE_ID --project $PROJECT_ID --file iam-gke-dev-minimal.yaml
+gcloud iam roles create $ROLE_ID --project $PROJECT_ID --file iam-gke-auth-minimal.yaml
 
 gcloud projects add-iam-policy-binding $PROJECT_ID --member $MEMBER --role=projects/$PROJECT_ID/roles/$ROLE_ID
 
