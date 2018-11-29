@@ -1,0 +1,8 @@
+= GKE DaemonSet example
+
+For modifying underlying OS or access hostPath contents
+
+Tested: gke-1.11.2-gke.18
+
+* CoS image, only /var is rw, but not ex
+* Ubuntu image, all can be rw

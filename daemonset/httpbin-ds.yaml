@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: httpbin-ds
+  name: httpbin-ds
+spec:
+  selector:
+    matchLabels:
+      app: httpbin-ds
+  template:
+    metadata:
+      labels:
+        app: httpbin-ds
+      name: httpbin-ds
+    spec:
+      containers:
+      - env:
+          - name: TEST
+            value: "false"
+        image: "citizenstig/httpbin"
+        name: httpbin-ds
+#        securityContext:
+#          privileged: true
+        volumeMounts:
+        - mountPath: /opt
+          name: test
+          readOnly: false
+        - mountPath: /var/run/docker.sock
+          name: docker-sock
+        - mountPath: /hostroot
+          name: host-root
+        - mountPath: /tmp/var
+          name: var
+      volumes:
+      - hostPath:
+          path: /
+        name: host-root
+      - hostPath:
+          path: /opt
+          type: Directory
+        name: test
+      - hostPath:
+          path: /var
+          type: Directory
+        name: var
+      - hostPath:
+          path: /var/run/docker.sock
+        name: docker-sock
