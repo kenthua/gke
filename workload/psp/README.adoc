@@ -12,7 +12,7 @@ The cluster needs to be enabled for pod security policies.  Note that if this is
 gcloud beta container clusters create [CLUSTER_NAME] --enable-pod-security-policy
 ----
 
-NOTE: For an existing cluster
+NOTE: For an existing cluster you can run the update command
 [source,bash]
 ----
 gcloud beta container clusters update [CLUSTER_NAME] --enable-pod-security-policy
@@ -27,7 +27,6 @@ kubectl create clusterrolebinding cluster-admin-binding \
 ----
 
 == Deploy the manifests 
-NOTE: An account that does not have 
 
 Create the namespace and set some permissions
 [source,bash]
