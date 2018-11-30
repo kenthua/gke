@@ -1,0 +1,76 @@
+= Pod Security Policy 
+
+PSP restricts the ability for a pod to be created based on policies set.  For instance a pod should not request the `securityContext` `privileged: true`.  If it does it cannot be created.  If it were a deployment, the deployment would be created, but no pods requesting privileged would be scheduled.
+
+Tested: on 1.11.3-gke.18
+
+== Setup
+The cluster needs to be enabled for pod security policies.  Note that if this is enabled no pods can be scheduled, unless there is a policy to allow it, cluster wide or within a namespace.
+
+[source,bash]
+----
+gcloud beta container clusters create [CLUSTER_NAME] --enable-pod-security-policy
+----
+
+NOTE: For an existing cluster
+[source,bash]
+----
+gcloud beta container clusters update [CLUSTER_NAME] --enable-pod-security-policy
+----
+
+Grant your account `cluster-admin`
+[source,bash]
+----
+kubectl create clusterrolebinding cluster-admin-binding \
+    --clusterrole=cluster-admin \
+    --user=$(gcloud config get-value core/account)
+----
+
+== Deploy the manifests 
+NOTE: An account that does not have 
+
+Create the namespace and set some permissions
+[source,bash]
+----
+kubectl apply -f namespace.yaml
+----
+
+Apply the `PSP`, clusterrole and bindings
+[source,bash]
+----
+kubectl apply -f psp.yaml
+----
+
+== Try a workload
+
+[source,bash]
+----
+kubectl apply -f httpbin-privileged.yaml -n dev
+----
+
+== Testing
+
+Note how your deployment can't provision any pods
+[source,bash]
+----
+kubectl get po -n dev
+No resources found.
+
+kubectl get deployment -n dev
+NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+httpbin   1         0         0            0           25s
+----
+
+If you deploy a non-privileged pod it goes through
+[source,bash]
+----
+kubectl apply -f httpbin -n dev
+
+kubectl get po -n dev
+NAME                       READY   STATUS    RESTARTS   AGE
+httpbin-748947595c-l24xp   1/1     Running   0          5m
+
+kubectl get deployment -n dev
+NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+httpbin   1         1         1            1           7m
+----
