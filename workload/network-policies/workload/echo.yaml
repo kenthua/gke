@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-echo
+  labels:
+    app: echo
+spec:
+  minReadySeconds: 60 # Number of seconds to wait after a Pod is created and its status is Ready
+  replicas: 1
+  selector:
+    matchLabels:
+      app: echo
+  template:
+    metadata:
+      labels:
+        app: echo
+    spec:
+      containers:
+      - name: echoserver
+        image: nicksardo/echoserver:latest
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 80
+      terminationGracePeriodSeconds: 60 # Number of seconds to wait for connections to terminate before shutting down Pods
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-echo
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}' # Creates an NEG after an Ingress is created
+  labels:
+    app: echo
+spec:
+  externalTrafficPolicy: Local
+  type: NodePort
+  ports:
+  - port: 80  # Port doesn't matter as nodeport is used for Ingress
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: echo
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: my-echo-ingress
+  labels:
+    app: echo
+spec:
+  backend:
+    serviceName: my-echo
+    servicePort: 80
