@@ -1,0 +1,18 @@
+kind: ServiceEntry
+metadata:
+  name: service1-entry
+spec:
+  hosts:
+  - service1.hipster1.global
+  location: MESH_INTERNAL
+  ports:
+  - name: http1
+    number: 8080
+    protocol: http
+  resolution: DNS
+  addresses:
+  - 127.255.0.20
+  endpoints:
+  - address: 35.238.52.48
+    ports:
+      http1: 15443

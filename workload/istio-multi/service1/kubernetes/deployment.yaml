@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service1
+  labels:
+    app: service1
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: service1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service1
+  template:
+    metadata:
+      labels:
+        app: service1
+        version: v1
+    spec:
+      containers:
+      - name: service1
+        image: gcr.io/kenthua-testing/service1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+---
