@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: service1
-        image: gcr.io/kenthua-testing/service1
+        image: gcr.io/kenthua-test-standalone/service1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080

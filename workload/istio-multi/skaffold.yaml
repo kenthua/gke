@@ -2,9 +2,9 @@ apiVersion: skaffold/v1beta11
 kind: Config
 build:
   artifacts:
-  - image: gcr.io/kenthua-testing/main-service
+  - image: gcr.io/kenthua-test-standalone/main-service
     context: mainservice
-  - image: gcr.io/kenthua-testing/service1
+  - image: gcr.io/kenthua-test-standalone/service1
     context: service1
 deploy:
   kubectl:
@@ -15,4 +15,4 @@ profiles:
 - name: gcb
   build:
     googleCloudBuild:
-      projectId: kenthua-testing
+      projectId: kenthua-test-standalone
