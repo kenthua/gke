@@ -13,6 +13,14 @@ gcloud services enable container.googleapis.com
 gcloud services enable containeranalysis.googleapis.com
 ----
 
+Select Application setup details to obtain the `apiKey` and `authDomain`
+
+Build & Deploy the Backend Service
+[source,bash]
+----
+./deploy-backend.sh
+----
+
 Enable and access https://console.cloud.google.com/marketplace/details/google-cloud-platform/customer-identity?_ga=2.9846582.-2056960249.1563911496[Identity Platform] on the marketplace.
 
 Add a Provider -> Email / Password
@@ -21,11 +29,6 @@ Create a test user
 
 Select Application setup details to obtain the `apiKey` and `authDomain`
 
-Build & Deploy the Backend Service
-[source,bash]
-----
-./redeploy-backend.sh
-----
 
 Collect some information for environment substitution
 [source,bash]
@@ -50,7 +53,7 @@ envsubt < src/frontend/index.template.js > src/frontend/index.js
 Build & Deploy the Frontend Service
 [source,bash]
 ----
-./redeploy-frontend.sh
+./deploy-frontend.sh
 ----
 
 Grab the IP of the frontend service
@@ -58,3 +61,5 @@ Grab the IP of the frontend service
 ----
 kubectl get svc frontend -n standalone -o jsonpath='{.stats.loadBalancer.ingress[0].ip}'
 ----
+
+Access the application with the IP output
