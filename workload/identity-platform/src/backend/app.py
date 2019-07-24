@@ -40,7 +40,10 @@ def secret_message():
         id_token = request.headers['Authorization'].split(' ').pop()
         logging.warning(id_token)
         claims = google.oauth2.id_token.verify_firebase_token(
-            id_token, HTTP_REQUEST, 'kenthua-test-identity')
+            id_token, HTTP_REQUEST)
+
+        # add the project id as the auth domain, for an additional check
+
         if not claims:
             return 'Unauthorized', 401
         logging.warning(claims)
