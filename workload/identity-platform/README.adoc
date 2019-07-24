@@ -1,0 +1,60 @@
+= GKE and Leveraging Identity Platform
+
+Utilized resources created through this https://cloud.google.com/solutions/authenticating-cloud-run-on-gke-end-users-using-istio-and-identity-platform[Google Cloud Solution].  Istio was used in the linked guide, the contents of this extracts out the components to do the bearer token auth and routing manually.
+
+== Instructions
+Enable the following APIs:
+
+[source,bash]
+----
+gcloud services enable cloudapis.googleapis.com
+gcloud services enable cloudbuild.googleapis.com
+gcloud services enable container.googleapis.com
+gcloud services enable containeranalysis.googleapis.com
+----
+
+Enable and access https://console.cloud.google.com/marketplace/details/google-cloud-platform/customer-identity?_ga=2.9846582.-2056960249.1563911496[Identity Platform] on the marketplace.
+
+Add a Provider -> Email / Password
+
+Create a test user
+
+Select Application setup details to obtain the `apiKey` and `authDomain`
+
+Build & Deploy the Backend Service
+[source,bash]
+----
+./redeploy-backend.sh
+----
+
+Collect some information for environment substitution
+[source,bash]
+----
+
+export AUTH_APIKEY=api-key
+export AUTH_DOMAIN=$GOOGLE_CLOUD_PROJECT.firebaseapp.com
+
+export BACKEND_IP=$(kubectl get svc backend -n standalone -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+echo $BACKEND_IP
+----
+
+Make sure the `BACKEND_IP` is set to an IP.
+
+Perform the environment substitution
+[source,bash]
+----
+envsubt < src/frontend/index.template.js > src/frontend/index.js
+----
+
+Build & Deploy the Frontend Service
+[source,bash]
+----
+./redeploy-frontend.sh
+----
+
+Grab the IP of the frontend service
+[source,bash]
+----
+kubectl get svc frontend -n standalone -o jsonpath='{.stats.loadBalancer.ingress[0].ip}'
+----
