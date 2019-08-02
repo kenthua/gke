@@ -6,7 +6,7 @@ variable "kubernetes_version" {
   default = "1.8.8"
 }
 
-variable "region" {
+variable "location" {
   default = "us-central1"
 }
 
@@ -16,4 +16,8 @@ variable "region_zone" {
 
 variable "project" {
   description = "The ID of the Google Cloud project"
+}
+
+variable "security_group" {
+  default = "gke-security-groups@yourdomain.com"
 }

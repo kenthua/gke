@@ -1,9 +1,9 @@
-data "google_compute_zones" "available" {}
-
 resource "google_container_cluster" "cluster0" {
+  provider = "google-beta"
   name                     = "${var.cluster_name}"
-  region                   = "${var.region}"
-  network                  = "default"
+  location                   = "${var.location}"
+  network                  = "${google_compute_network.gke-network.self_link}"
+  subnetwork              = "${google_compute_subnetwork.gke-subnet.self_link}"
   remove_default_node_pool = true
 
   #zone               = "${data.google_compute_zones.available.names[0]}" # for zonal
@@ -11,21 +11,30 @@ resource "google_container_cluster" "cluster0" {
 
   min_master_version = "${var.kubernetes_version}"
   node_version       = "${var.kubernetes_version}"
-  additional_zones = [
-    "${data.google_compute_zones.available.names[1]}",
-    "${data.google_compute_zones.available.names[2]}",
-  ]
+  ip_allocation_policy {
+    use_ip_aliases = true
+    services_secondary_range_name = "service-cidr"
+    cluster_secondary_range_name = "pod-cidr"
+  }
+
   node_pool {
     name = "default-pool"
+  }
+  authenticator_groups_config {
+    security_group = "${var.security_group}"
+
   }
   lifecycle {
     ignore_changes = ["node_pool", "node_version", "network"]
   }
+
+  depends_on = [google_compute_subnetwork.gke-subnet]
 }
 
 resource "google_container_node_pool" "nodepool0" {
+  provider = "google-beta"
   cluster = "${google_container_cluster.cluster0.name}"
-  region  = "${var.region}"
+  location  = "${var.location}"
   name    = "dev-pool"
 
   node_count = 3
@@ -45,11 +54,29 @@ resource "google_container_node_pool" "nodepool0" {
       "https://www.googleapis.com/auth/monitoring",
     ]
 
-    labels {
-      env      = "dev"
-      pipeline = "cicd"
-    }
-
     tags = ["dev", "pool"]
   }
+}
+
+resource "google_compute_subnetwork" "gke-subnet" {
+  name          = "gke-sub"
+  ip_cidr_range = "10.100.0.0/24"
+  region        = "us-central1"
+  network       = "${google_compute_network.gke-network.self_link}"
+  secondary_ip_range {
+    range_name    = "pod-cidr"
+    ip_cidr_range = "192.168.0.0/19"
+  }
+  secondary_ip_range {
+    range_name    = "service-cidr"
+    ip_cidr_range = "172.16.10.0/24"
+  }
+  
+  depends_on = [google_compute_network.gke-network]
+}
+
+resource "google_compute_network" "gke-network" {
+  provider = "google-beta"
+  name                    = "gke-network"
+  auto_create_subnetworks = false
 }
