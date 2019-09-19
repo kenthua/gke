@@ -1,0 +1,26 @@
+---
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRole
+metadata:
+  name: details-viewer
+spec:
+  rules:
+  - services: ["*"]
+    methods: ["GET"]
+    constraints:
+    - key: "source.labels[app]"
+      values: ["productpage"]
+---
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRoleBinding
+metadata:
+  name: details-viewer-binding
+spec:
+  subjects:
+  - properties:
+      source.namespace: "istio-system"
+  - properties:
+      source.namespace: "default"
+  roleRef:
+    kind: ServiceRole
+    name: "details-viewer"

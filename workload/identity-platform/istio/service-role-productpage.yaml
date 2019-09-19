@@ -1,0 +1,29 @@
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ClusterRbacConfig
+metadata:
+  name: default
+spec:
+  mode: "ON_WITH_INCLUSION"
+  inclusion:
+    services: ["productpage.default.svc.cluster.local", "details.default.svc.cluster.local"]
+---
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRole
+metadata:
+  name: productpage-viewer
+spec:
+  rules:
+  - services: ["productpage.default.svc.cluster.local"]
+    methods: ["GET"]
+---
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRoleBinding
+metadata:
+  name: productpage-viewer-binding
+spec:
+  subjects:
+  - properties:
+      request.auth.claims[groups]: "productpage"
+  roleRef:
+    kind: ServiceRole
+    name: "productpage-viewer"

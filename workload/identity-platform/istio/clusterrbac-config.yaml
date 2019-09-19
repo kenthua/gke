@@ -5,4 +5,4 @@ metadata:
 spec:
   mode: "ON_WITH_INCLUSION"
   inclusion:
-    services: ["productpage.default.svc.cluster.local"]
+    services: ["productpage.default.svc.cluster.local", "details.default.svc.cluster.local"]
