@@ -17,6 +17,7 @@
 var config = {
   apiKey: "$AUTH_APIKEY",
   authDomain: "$AUTH_DOMAIN",
+  storageBucket: "$STORAGE_BUCKET",
 };
 firebase.initializeApp(config);
 
@@ -28,6 +29,7 @@ var uiConfig = {
 };
 
 var ui = new firebaseui.auth.AuthUI(firebase.auth());
+var storage = firebase.storage();
 
 function signedIn(user) {
   document.getElementById('signedOut').style.display = 'none';
@@ -46,6 +48,17 @@ function signedIn(user) {
       console.error('Error: ', error);
     });
   });
+
+  // Create a reference to the file whose metadata we want to retrieve
+var forestRef = storage.child('images/forest.jpg');
+console.log('storage');
+// Get metadata properties
+forestRef.getMetadata().then(function(metadata) {
+  document.getElementById('output').innerText = metadata;
+}).catch(function(error) {
+  // Uh-oh, an error occurred!
+});
+
 }
 
 function signedOut() {
