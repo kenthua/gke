@@ -65,3 +65,17 @@ kubectl get svc frontend -n standalone -o jsonpath='{.stats.loadBalancer.ingress
 ----
 
 Access the application with the IP output
+
+
+
+istio..
+deploy istio
+deploy bookinfo
+deploy bookinfo gateway
+deploy bookinfo destination rules mtls
+deploy frontend-istio to get the frontend to route through the gateway
+deploy istiopolicy at the namespace level
+deploy clusterrbac-config to enforce rbac
+fail
+deploy serviceroleproduct page test, notice no details
+deploy serviceroledetails to allow fro productpage to call details
