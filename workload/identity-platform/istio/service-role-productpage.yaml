@@ -1,11 +1,3 @@
-apiVersion: "rbac.istio.io/v1alpha1"
-kind: ClusterRbacConfig
-metadata:
-  name: default
-spec:
-  mode: "ON_WITH_INCLUSION"
-  inclusion:
-    services: ["productpage.default.svc.cluster.local", "details.default.svc.cluster.local"]
 ---
 apiVersion: "rbac.istio.io/v1alpha1"
 kind: ServiceRole
