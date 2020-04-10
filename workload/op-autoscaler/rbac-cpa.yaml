@@ -1,0 +1,30 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: node-reader
+rules:
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["list", "watch"]
+  - apiGroups: [""]
+    resources: ["replicationcontrollers/scale"]
+    verbs: ["get", "update"]
+  - apiGroups: ["extensions","apps"]
+    resources: ["deployments/scale", "replicasets/scale"]
+    verbs: ["get", "update"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "create"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: node-reader-binding
+subjects:
+- kind: ServiceAccount
+  name: cpa-sa
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: node-reader
+  apiGroup: rbac.authorization.k8s.io
