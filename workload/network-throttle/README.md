@@ -1,4 +1,7 @@
 ### Network throttling
+
+Utilizing [Traffic Shaping](https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/#support-traffic-shaping), GKE 1.15+ with Network Policy and/or Interanode Visiblity enabled
+
 * Get the IP of the pod / service for testing locally or remotely
   ```shell
   kubectl get po -o wide
