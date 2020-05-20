@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: iperf3-client
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iperf3-client
+  labels:
+    app: iperf3-client
+spec:
+  ports:
+  - port: 5201
+    name: tcp
+  selector:
+    app: iperf3-client
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iperf3-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iperf3-client
+  template:
+    metadata:
+      labels:
+        app: iperf3-client
+    spec:
+      serviceAccountName: iperf3-client
+      containers:
+      - name: iperf3-client
+        image: networkstatic/iperf3
+        command:
+        - sleep
+        args:
+        - 100h
+        imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: iperf3-server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iperf3-server
+  labels:
+    app: iperf3-server
+spec:
+  ports:
+  - port: 5201
+    name: tcp
+  selector:
+    app: iperf3-server
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iperf3-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iperf3-server
+  template:
+    metadata:
+      labels:
+        app: iperf3-server
+      annotations:
+        kubernetes.io/ingress-bandwidth: 10M
+        kubernetes.io/egress-bandwidth: 20M
+    spec:
+      serviceAccountName: iperf3-server
+      containers:
+      - name: iperf3-server
+        image: networkstatic/iperf3
+        command:
+        - iperf3
+        - -s
+        imagePullPolicy: IfNotPresent
