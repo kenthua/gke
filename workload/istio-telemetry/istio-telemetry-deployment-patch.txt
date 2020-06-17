@@ -1,0 +1,14 @@
+    spec:
+      volumes:
+      - name: google-cloud-key
+        secret:
+          secretName: istio-mixer-key
+      containers:
+      - name: mixer
+		  # ...
+        volumeMounts:
+        - name: google-cloud-key
+          mountPath: /var/secrets/google
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/istio-mixer.json
