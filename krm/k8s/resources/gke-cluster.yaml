@@ -42,8 +42,14 @@ spec:
   maintenancePolicy:
     dailyMaintenanceWindow:
       startTime: 00:00
+  privateClusterConfig:
+    enablePrivateEndpoint: false
+    enablePrivateNodes: true
+    masterGlobalAccessConfig:
+      enabled: true
+    masterIpv4CidrBlock: "172.16.1.0/28"
   releaseChannel:
-    channel: STABLE
+    channel: REGULAR
   notificationConfig:
     pubsub:
       enabled: true

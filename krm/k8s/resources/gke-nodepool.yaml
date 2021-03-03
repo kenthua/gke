@@ -6,6 +6,7 @@ metadata:
   name: pool-1
 spec:
   location: us-central1
+  initialNodeCount: 1
   autoscaling:
     minNodeCount: 1
     maxNodeCount: 3

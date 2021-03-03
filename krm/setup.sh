@@ -61,7 +61,33 @@ kubectl annotate namespace \
   cnrm.cloud.google.com/project-id=${PROJECT_ID}
 
 # Resources
+# https://github.com/GoogleCloudPlatform/k8s-config-connector
 # https://cloud.google.com/config-connector/docs/reference/resource-docs/container/containercluster
-k apply -f resources/vpc.yaml -n ${NAMESPACE}
-k apply -f resources/gke-cluster.yaml -n ${NAMESPACE}
-k apply -f resources/gke-nodepool.yaml -n ${NAMESPACE}
+k apply -f resources/p1/vpc.yaml -n ${NAMESPACE}
+k apply -f resources/p1/gke-cluster.yaml -n ${NAMESPACE}
+k apply -f resources/p1/gke-nodepool.yaml -n ${NAMESPACE}
+
+
+export PROJECT_ID_2=kenthua-test-identity
+export NAMESPACE_2=${PROJECT_ID_2}
+kubectl create namespace ${NAMESPACE_2}
+kubectl annotate namespace \
+  ${NAMESPACE_2} \
+  cnrm.cloud.google.com/project-id=${PROJECT_ID_2}
+
+# Resources
+# https://github.com/GoogleCloudPlatform/k8s-config-connector
+# https://cloud.google.com/config-connector/docs/reference/resource-docs/container/containercluster
+k apply -f resources/p2/vpc.yaml -n ${NAMESPACE_2}
+k apply -f resources/p2/gke-cluster.yaml -n ${NAMESPACE_2}
+k apply -f resources/p2/gke-nodepool.yaml -n ${NAMESPACE_2}
+
+
+
+# cleanup
+k delete -f resources/p1/gke-nodepool.yaml -n ${NAMESPACE}
+k delete -f resources/p1/gke-cluster.yaml -n ${NAMESPACE}
+k delete -f resources/p2/gke-nodepool.yaml -n ${NAMESPACE_2}
+k delete -f resources/p2/gke-cluster.yaml -n ${NAMESPACE_2}
+k delete -f resources/p1/vpc.yaml -n ${NAMESPACE}
+k delete -f resources/p2/vpc.yaml -n ${NAMESPACE_2}
