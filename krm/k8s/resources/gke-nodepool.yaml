@@ -15,7 +15,6 @@ spec:
     diskSizeGb: 100
     diskType: pd-standard
     preemptible: false
-    minCpuPlatform: "Intel Haswell"
     oauthScopes:
       - "https://www.googleapis.com/auth/logging.write"
       - "https://www.googleapis.com/auth/monitoring"
