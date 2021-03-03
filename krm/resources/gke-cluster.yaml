@@ -1,0 +1,70 @@
+apiVersion: container.cnrm.cloud.google.com/v1beta1
+kind: ContainerCluster
+metadata:
+  labels:
+    availability: high
+    target-audience: production
+  name: cc-test-k8s
+spec:
+  description: A large regional VPC-native cluster set up with special networking considerations.
+  location: us-central1
+  initialNodeCount: 0
+  defaultMaxPodsPerNode: 16
+  nodeLocations:
+    - us-central1-a
+    - us-central1-b
+    - us-central1-c
+    - us-central1-f
+  workloadIdentityConfig:
+    # Workload Identity supports only a single namespace based on your project name.
+    # Replace ${PROJECT_ID?} below with your project ID.
+    identityNamespace: kenthua-test-standalone.svc.id.goog
+  networkingMode: VPC_NATIVE
+  networkRef:
+    name: cc-vpc
+  subnetworkRef:
+    name: cc-uscentral1
+  ipAllocationPolicy:
+    servicesSecondaryRangeName: servicesrange
+    clusterSecondaryRangeName: clusterrange
+  clusterAutoscaling:
+    enabled: true
+    autoscalingProfile: BALANCED
+    resourceLimits:
+    - resourceType: cpu
+      maximum: 100
+      minimum: 10
+    - resourceType: memory
+      maximum: 1000
+      minimum: 100
+  maintenancePolicy:
+    dailyMaintenanceWindow:
+      startTime: 00:00
+  releaseChannel:
+    channel: STABLE
+  notificationConfig:
+    pubsub:
+      enabled: true
+      topicRef:
+        name: cc-test-k8s
+  enableBinaryAuthorization: true
+  enableIntranodeVisibility: true
+  enableShieldedNodes: true
+  addonsConfig:
+    networkPolicyConfig:
+      disabled: false
+    dnsCacheConfig:
+      enabled: true
+    configConnectorConfig:
+      enabled: true
+  networkPolicy:
+    enabled: true
+  podSecurityPolicyConfig:
+    enabled: false
+  verticalPodAutoscaling:
+    enabled: true
+---
+apiVersion: pubsub.cnrm.cloud.google.com/v1beta1
+kind: PubSubTopic
+metadata:
+  name: cc-test-k8s
