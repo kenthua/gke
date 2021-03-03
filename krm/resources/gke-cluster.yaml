@@ -1,6 +1,8 @@
 apiVersion: container.cnrm.cloud.google.com/v1beta1
 kind: ContainerCluster
 metadata:
+  annotations:
+    cnrm.cloud.google.com/remove-default-node-pool: "true"
   labels:
     availability: high
     target-audience: production
@@ -8,7 +10,7 @@ metadata:
 spec:
   description: A large regional VPC-native cluster set up with special networking considerations.
   location: us-central1
-  initialNodeCount: 0
+  initialNodeCount: 1
   defaultMaxPodsPerNode: 16
   nodeLocations:
     - us-central1-a
