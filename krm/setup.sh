@@ -62,6 +62,6 @@ kubectl annotate namespace \
 
 # Resources
 # https://cloud.google.com/config-connector/docs/reference/resource-docs/container/containercluster
-k apply -f vpc.yaml -n ${NAMESPACE}
-k apply -f gke-cluster.yaml -n ${NAMESPACE}
-k apply -f gke-nodepool.yaml -n ${NAMESPACE}
+k apply -f resources/vpc.yaml -n ${NAMESPACE}
+k apply -f resources/gke-cluster.yaml -n ${NAMESPACE}
+k apply -f resources/gke-nodepool.yaml -n ${NAMESPACE}
