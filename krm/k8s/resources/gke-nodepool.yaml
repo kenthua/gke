@@ -11,7 +11,7 @@ spec:
     minNodeCount: 1
     maxNodeCount: 3
   nodeConfig:
-    machineType: e2-medium
+    machineType: e2-standard-4
     diskSizeGb: 100
     diskType: pd-standard
     preemptible: false
