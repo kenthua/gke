@@ -83,6 +83,13 @@ k apply -f resources/p2/gke-cluster.yaml -n ${NAMESPACE_2}
 k apply -f resources/p2/gke-nodepool.yaml -n ${NAMESPACE_2}
 
 
+export PROJECT_ID_3=kenthua-test-service-01
+export NAMESPACE_3=${PROJECT_ID_3}
+kubectl create namespace ${NAMESPACE_3}
+kubectl annotate namespace \
+  ${NAMESPACE_3} \
+  cnrm.cloud.google.com/project-id=${PROJECT_ID_3}
+
 
 # cleanup
 k delete -f resources/p1/gke-nodepool.yaml -n ${NAMESPACE}
