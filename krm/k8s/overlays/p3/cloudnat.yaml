@@ -1,0 +1,20 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeRouterNAT
+metadata:
+  name: egress-nat-us-central1
+spec:
+  region: us-central1
+  routerRef:
+    name: cc-egress-router-central1
+  natIpAllocateOption: AUTO_ONLY
+  sourceSubnetworkIpRangesToNat: ALL_SUBNETWORKS_ALL_IP_RANGES
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeRouter
+metadata:
+  name: cc-egress-router-central1
+spec:
+  description: example router description
+  region: us-central1
+  networkRef:
+    name: cc-vpc
