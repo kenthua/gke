@@ -15,7 +15,7 @@ patchesJSON6902:
       value: kenthua-test-service-01.svc.id.goog
     - op: replace
       path: /spec/nodeConfig/serviceAccountRef/external
-      value: project-service-account@kenthua-test-service-01.iam.gserviceaccount.com      
+      value: project-service-account@kenthua-test-service-01.iam.gserviceaccount.com
 - target:
     group: container.cnrm.cloud.google.com
     version: v1beta1
