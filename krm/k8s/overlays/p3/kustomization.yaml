@@ -11,6 +11,10 @@ patchesJSON6902:
     kind: ContainerCluster
     name: cc-test-k8s
   patch: |-
+    - op: add
+      path: /metadata/labels
+      value:
+        mesh_id: proj-693281794163
     - op: replace
       path: /spec/workloadIdentityConfig/identityNamespace
       value: kenthua-test-service-01.svc.id.goog
