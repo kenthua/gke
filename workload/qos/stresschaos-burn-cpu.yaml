@@ -1,0 +1,18 @@
+# https://github.com/chaos-mesh/chaos-mesh
+# ## install ##
+# curl -sSL https://mirrors.chaos-mesh.org/v1.1.2/install.sh | bash
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: burn-cpu
+  namespace: chaos-testing
+spec:
+  mode: fixed
+  value: "5"
+  selector:
+    namespaces:
+      - default
+  stressors:
+    cpu:
+      workers: 5
+      load: 100
