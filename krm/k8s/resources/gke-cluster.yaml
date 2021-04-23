@@ -11,7 +11,7 @@ spec:
   description: A large regional VPC-native cluster set up with special networking considerations.
   location: us-central1
   initialNodeCount: 1
-  defaultMaxPodsPerNode: 16
+  defaultMaxPodsPerNode: 32
   nodeLocations:
     - us-central1-a
     - us-central1-b

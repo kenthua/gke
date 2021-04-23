@@ -92,9 +92,12 @@ kubectl annotate namespace \
 
 
 # cleanup
+kustomize build | k delete -n ${NAMESPACE_3} -f -
+
 k delete -f resources/p1/gke-nodepool.yaml -n ${NAMESPACE}
 k delete -f resources/p1/gke-cluster.yaml -n ${NAMESPACE}
 k delete -f resources/p2/gke-nodepool.yaml -n ${NAMESPACE_2}
 k delete -f resources/p2/gke-cluster.yaml -n ${NAMESPACE_2}
 k delete -f resources/p1/vpc.yaml -n ${NAMESPACE}
 k delete -f resources/p2/vpc.yaml -n ${NAMESPACE_2}
+

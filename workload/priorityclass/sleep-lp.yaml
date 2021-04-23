@@ -23,11 +23,11 @@ spec:
   replicas: 10
   selector:
     matchLabels:
-      app: sleep
+      app: sleep-lp
   template:
     metadata:
       labels:
-        app: sleep
+        app: sleep-lp
     spec:
       terminationGracePeriodSeconds: 0
       containers:
