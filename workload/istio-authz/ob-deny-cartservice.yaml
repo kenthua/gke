@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: deny-cartservice-from-checkout
+  namespace: ob
+spec:
+  selector:
+    matchLabels:
+      app: cartservice
+  action: DENY
+  rules:
+  - from:
+    - source:
+        principals: ["cluster.local/ns/ob/sa/checkoutservice"]
+    to:
+    - operation:
+        methods: ["POST","GET"]
