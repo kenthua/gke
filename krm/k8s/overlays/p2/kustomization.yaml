@@ -3,6 +3,8 @@ kind: Kustomization
 resources:
 - ../../resources
 namespace: kenthua-test-identity
+commonLabels:
+  provisioner: cc
 patchesJSON6902:
 - target:
     group: container.cnrm.cloud.google.com
@@ -13,3 +15,13 @@ patchesJSON6902:
     - op: replace
       path: /spec/workloadIdentityConfig/identityNamespace
       value: kenthua-test-identity.svc.id.goog
+- target:
+    group: container.cnrm.cloud.google.com
+    version: v1beta1
+    kind: ContainerNodePool
+    name: pool-1
+  patch: |-
+    - op: add
+      path: /spec/nodeConfig/tags
+      value:
+        - cc-test-k8s-node
