@@ -1,0 +1,15 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeForwardingRule
+metadata:
+  name: cc-test-k8s-globalforwardingrule
+spec:
+  description: "A global forwarding rule"
+  target:
+    targetHTTPProxyRef:
+      name: cc-test-k8s-targethttpproxy
+  portRange: "80"
+  ipProtocol: "TCP"
+  location: global
+  ipAddress:
+    addressRef:
+      name: cc-test-k8s-vip

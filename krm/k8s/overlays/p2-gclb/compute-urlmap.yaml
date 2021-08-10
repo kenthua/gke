@@ -1,0 +1,9 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeURLMap
+metadata:
+  name: cc-test-k8s-urlmap
+spec:
+  location: global
+  defaultService:
+    backendServiceRef:
+      name: cc-test-k8s-bes

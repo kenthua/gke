@@ -1,0 +1,34 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+#- ../../resources
+- compute-firewall-gclb.yaml
+- compute-address.yaml
+- compute-healthcheck-http.yaml
+- compute-backendservice.yaml
+- compute-urlmap.yaml
+- compute-targethttpproxy.yaml
+- compute-forwardingrule.yaml
+namespace: kenthua-test-identity
+commonLabels:
+  provisioner: cc
+patchesJSON6902:
+- target:
+    group: container.cnrm.cloud.google.com
+    version: v1beta1
+    kind: ContainerCluster
+    name: cc-test-k8s
+  patch: |-
+    - op: replace
+      path: /spec/workloadIdentityConfig/identityNamespace
+      value: kenthua-test-identity.svc.id.goog
+- target:
+    group: container.cnrm.cloud.google.com
+    version: v1beta1
+    kind: ContainerNodePool
+    name: pool-1
+  patch: |-
+    - op: add
+      path: /spec/nodeConfig/tags
+      value:
+        - cc-test-k8s-node

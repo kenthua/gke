@@ -1,0 +1,9 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeTargetHTTPProxy
+metadata:
+  name: cc-test-k8s-targethttpproxy
+spec:
+  description: "HTTP proxy"
+  urlMapRef:
+    name: cc-test-k8s-urlmap
+  location: global

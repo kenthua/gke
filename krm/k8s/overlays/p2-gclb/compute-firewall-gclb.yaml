@@ -1,0 +1,17 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeFirewall
+metadata:
+  name: gclb-allow
+spec:
+  allow:
+    - protocol: tcp
+      ports:
+      - "80"
+      - "5000"
+  sourceRanges: 
+  - "130.211.0.0/22"
+  - "35.191.0.0/16"
+  targetTags:
+  - cc-test-k8s-node
+  networkRef:
+    name: cc-vpc

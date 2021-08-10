@@ -1,0 +1,12 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeHealthCheck
+metadata:
+  name: cc-test-k8s-health-check
+spec:
+  checkIntervalSec: 5
+  httpHealthCheck:
+    portSpecification: "USE_SERVING_PORT"
+  healthyThreshold: 2
+  unhealthyThreshold: 2
+  timeoutSec: 5
+  location: global

@@ -1,0 +1,42 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeBackendService
+metadata:
+  name: cc-test-k8s-bes
+spec:
+  description: cc-test-k8s-backend
+  portName: http
+  timeoutSec: 30
+  healthChecks:
+  - healthCheckRef:
+      name: cc-test-k8s-health-check
+  loadBalancingScheme: EXTERNAL
+  location: global
+  protocol: HTTP
+  affinityCookieTtlSec: 0
+  connectionDrainingTimeoutSec: 0
+  sessionAffinity: NONE
+  backend:
+  - balancingMode: RATE
+    capacityScaler: 1
+    description: A network endpoint group serving this backend with all its available capacity, as calculated by number of simultaneous connections.
+    maxRatePerEndpoint: 5
+    group:
+      networkEndpointGroupRef:
+        external: https://www.googleapis.com/compute/v1/projects/kenthua-test-identity/zones/us-central1-a/networkEndpointGroups/httpbin
+    maxUtilization: 0.8
+  - balancingMode: RATE
+    capacityScaler: 1
+    description: A network endpoint group serving this backend with all its available capacity, as calculated by number of simultaneous connections.
+    maxRatePerEndpoint: 5
+    group:
+      networkEndpointGroupRef:
+        external: https://www.googleapis.com/compute/v1/projects/kenthua-test-identity/zones/us-central1-b/networkEndpointGroups/httpbin
+    maxUtilization: 0.8
+  - balancingMode: RATE
+    capacityScaler: 1
+    description: A network endpoint group serving this backend with all its available capacity, as calculated by number of simultaneous connections.
+    maxRatePerEndpoint: 5
+    group:
+      networkEndpointGroupRef:
+        external: https://www.googleapis.com/compute/v1/projects/kenthua-test-identity/zones/us-central1-c/networkEndpointGroups/httpbin
+    maxUtilization: 0.8
