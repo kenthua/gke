@@ -1,0 +1,12 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: resource-manager
+  namespace: team2
+subjects:
+  - kind: Group
+    name: team2@kenthua.joonix.net
+roleRef:
+  kind: Role
+  name: resource-manager-role
+  apiGroup: rbac.authorization.k8s.io
