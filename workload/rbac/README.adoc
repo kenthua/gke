@@ -9,6 +9,8 @@ Tested on GKE 1.9.7
 **NOTE**
 An IAM pre-defined role https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control#iam-interaction[Cluster Viewer] was added with the `container.clusters.get` permission along with 3 other permissions.
 
+Role description can be found https://cloud.google.com/kubernetes-engine/docs/how-to/iam#predefined[here]
+
 
 == Setup the namespace
 
