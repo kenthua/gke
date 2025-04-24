@@ -1,0 +1,22 @@
+kind: Gateway
+apiVersion: gateway.networking.k8s.io/v1beta1
+metadata:
+  name: whereami-internal-cluster-http
+  annotations:
+    cert-manager.io/issuer: googlecasclusterissuer
+    cert-manager.io/issuer-kind: GoogleCASClusterIssuer
+    cert-manager.io/issuer-group: cas-issuer.jetstack.io
+spec:
+  gatewayClassName: gke-l7-rilb
+  listeners:
+  - name: https
+    hostname: whereami-cluster.example.com
+    protocol: HTTPS
+    port: 443
+    allowedRoutes:
+      namespaces:
+        from: All      
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: whereami-cluster-example-com-tls

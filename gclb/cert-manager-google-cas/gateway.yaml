@@ -1,0 +1,22 @@
+kind: Gateway
+apiVersion: gateway.networking.k8s.io/v1beta1
+metadata:
+  name: whereami-internal-http
+  annotations:
+    cert-manager.io/issuer: googlecasissuer
+    cert-manager.io/issuer-group: cas-issuer.jetstack.io
+    cert-manager.io/issuer-kind: GoogleCASIssuer
+spec:
+  gatewayClassName: gke-l7-rilb
+  listeners:
+  - name: https
+    hostname: whereami.example.com
+    protocol: HTTPS
+    port: 443
+    allowedRoutes:
+      namespaces:
+        from: All      
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: whereami-example-com-tls

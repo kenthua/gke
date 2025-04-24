@@ -1,0 +1,23 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: demo-certificate-test-cluster
+  namespace: default
+spec:
+  # The secret name to store the signed certificate
+  secretName: demo-cert-tls-cluster
+  # Common Name
+  commonName: cert-manager.io.demo
+  # DNS SAN
+  dnsNames:
+    - cert-manager.io
+    - jetstack.io
+  # Duration of the certificate
+  duration: 24h
+  # Renew 8 hours before the certificate expiration
+  renewBefore: 8h
+  # Important: Ensure the issuerRef is set to the issuer or cluster issuer configured earlier
+  issuerRef:
+    group: cas-issuer.jetstack.io
+    kind: GoogleCASClusterIssuer # or GoogleCASIssuer
+    name: googlecasclusterissuer # or googlecasissuer-sample
