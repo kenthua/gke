@@ -41,7 +41,7 @@ Adjust variables/settings as needed: GCS Bucket, KSA, etc
 kubectl apply -f ray-service.yaml
 ```
 
-> NOTE: The `fetch-safetensors` container is second on the `workerGroupSpecs` because Ray will automatically inject `ray start` as an argument to the command which will cause the startup to fail.
+> NOTE: The `fetch-safetensors` container is [second](https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/config.html#containers) on the `workerGroupSpecs` because Ray will automatically inject `ray start` as an argument to the command which will cause the startup to fail. This can be [overwritten](https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/pod-command.html) at a cluster level.
 
 ## Misc
 
