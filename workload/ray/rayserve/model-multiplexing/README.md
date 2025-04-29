@@ -165,6 +165,8 @@ kubectl get gateway/vllm-lb -o jsonpath='{.status.addresses[0].address}')
 
 - Test out querying the gateway EndPoint Picker (EPP)
 
+Replace the IP and Port to your respective deployment settings
+
 ```shell
 curl -i -X POST 10.0.10.210:80/ -H 'serve_multiplexed_model_id: /gcs/google/gemma-7b-it' -H 'Content-Type: application/json' -d '{"model": "/gcs/google/gemma-7b-it","prompt": "What are the top 5 most popular programming languages? Please be brief."}'
 
