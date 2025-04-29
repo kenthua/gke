@@ -39,11 +39,12 @@ spec:
         working_dir: "https://github.com/kenthua/gke/archive/main.zip"
         pip: ["vllm==0.8.4"]
         env_vars:
-          MODEL_1_ID: "/gcs/google/gemma-7b-it"
-          #MODEL_1_ID: "google/gemma-7b-it"
+          MODEL_1_ID: "/gcs/google/gemma-2-9b-it"
+          #MODEL_1_ID: "/gcs/google/gemma-7b-it"
+          #MODEL_1_ID: "google/gemma-2-9b-it"
           MODEL_1_TENSOR_PARALLELISM: "2"
-          MODEL_2_ID: "/gcs/meta-llama/Meta-Llama-3-8B-Instruct"
-          #MODEL_2_ID: "meta-llama/Meta-Llama-3-8B-Instruct"
+          MODEL_2_ID: "/gcs/meta-llama/Llama-3.1-8B-Instruct"
+          #MODEL_2_ID: "meta-llama/Llama-3.1-8B-Instruct"
           MODEL_2_TENSOR_PARALLELISM: "2"
   rayClusterConfig:
     headGroupSpec:

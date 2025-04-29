@@ -1,4 +1,4 @@
-# Ray Serve with GCS Fuse as the storage for the model weights
+# Inference Gateway + Ray Serve with GCS Fuse as the storage for the model weights
 
 References:
 
@@ -39,7 +39,7 @@ gcloud storage buckets add-iam-policy-binding gs://${BUCKET} \
 
 ## Deploy the workload
 
-Adjust variables/settings as needed: GCS Bucket, KSA, etc
+- Adjust variables/settings as needed: GCS Bucket, KSA, etc
 
 ```shell
 kubectl apply -f ray-service.yaml
@@ -47,6 +47,54 @@ kubectl apply -f ray-service.yaml
 
 > NOTE: If downloading from HF, remove GCS references
 > NOTE: The `fetch-safetensors` container is [second](https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/config.html#containers) on the `workerGroupSpecs` because Ray will automatically inject `ray start` as an argument to the command which will cause the startup to fail. This can be [overwritten](https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/pod-command.html) at a cluster level.
+
+- Check the service deployment status
+
+```shell
+kubectl describe rayservice model-multiplexing
+```
+
+Example output
+
+```shell
+Status:
+  Active Service Status:
+    Application Statuses:
+      Llm:
+        Health Last Update Time:  2025-04-30T02:28:07Z
+        Serve Deployment Statuses:
+          Multi Model Deployment:
+            Health Last Update Time:  2025-04-30T02:28:07Z
+            Status:                   HEALTHY
+          VLLM Deployment:
+            Health Last Update Time:  2025-04-30T02:28:07Z
+            Status:                   HEALTHY
+          VLLMDeployment_1:
+            Health Last Update Time:  2025-04-30T02:28:07Z
+            Status:                   HEALTHY
+        Status:                       RUNNING
+    Ray Cluster Name:                 model-multiplexing-raycluster-l4lwg
+    Ray Cluster Status:
+      Available Worker Replicas:  2
+      Desired CPU:                42
+      Desired GPU:                5
+      Desired Memory:             88Gi
+      Desired TPU:                0
+      Desired Worker Replicas:    2
+      Endpoints:
+        Client:        10001
+        Dashboard:     8265
+        Gcs - Server:  6379
+        Metrics:       8080
+        Serve:         8000
+      Head:
+        Pod IP:             10.3.128.200
+        Service IP:         34.118.234.245
+      Last Update Time:     2025-04-30T02:26:13Z
+      Max Worker Replicas:  4
+      Observed Generation:  1
+      State:                ready
+```
 
 ## Inference Gateway
 
@@ -162,17 +210,21 @@ kubectl apply -f gateway.yaml
 kubectl apply -f httproute.yaml
 
 # get the gateway IP
-kubectl get gateway/vllm-lb -o jsonpath='{.status.addresses[0].address}')
+kubectl get gateway/vllm-lb -o jsonpath='{.status.addresses[0].address}'
 ```
 
 - Test out querying the gateway EndPoint Picker (EPP)
 
-Replace the IP and Port to your respective deployment settings
+Replace the IP and Port to your respective deployment settings.
+
+> NOTE: Ray Service uses the [HTTP header](https://docs.ray.io/en/latest/serve/model-multiplexing.html#writing-a-multiplexed-deployment) `serve_multiplexed_model_id` to designate the model to be served. This is propagated from the EPP to the ray serve endpoint.
 
 ```shell
-curl -i -X POST 10.0.10.210:80/ -H 'serve_multiplexed_model_id: /gcs/google/gemma-7b-it' -H 'Content-Type: application/json' -d '{"model": "/gcs/google/gemma-7b-it","prompt": "What are the top 5 most popular programming languages? Please be brief."}'
+IP=$(kubectl get gateway/vllm-lb -o jsonpath='{.status.addresses[0].value}')
 
-curl -i -X POST 10.0.10.210:80/ -H 'serve_multiplexed_model_id: /gcs/meta-llama/Meta-Llama-3-8B-Instruct' -H 'Content-Type: application/json' -d '{"model": "/gcs/meta-llama/Meta-Llama-3-8B-Instruct","prompt": "What are the top 5 most popular programming languages? Please be brief."}'
+curl -i -X POST http://$IP:80/ -H 'serve_multiplexed_model_id: /gcs/google/gemma-2-9b-it' -H 'Content-Type: application/json' -d '{"model": "/gcs/google/gemma-2-9b-it","prompt": "What are the top 5 most popular programming languages? Please be brief."}'
+
+curl -i -X POST http://$IP:80/ -H 'serve_multiplexed_model_id: /gcs/meta-llama/Llama-3.1-8B-Instruct' -H 'Content-Type: application/json' -d '{"model": "/gcs/meta-llama/Llama-3.1-8B-Instruct","prompt": "What are the top 5 most popular programming languages? Please be brief."}'
 ```
 
 > NOTE: If testing from HF, remove the `/gcs/` prefix.
@@ -198,5 +250,3 @@ gcloud compute networks subnets create kh-central1-proxyonly \
     --network=kenthua-vpc \
     --range=10.0.100.0/23
 ```
-
-> NOTE: NotSupportedByGateway: Bind of InferencePool "default/ray-vllm-models" to GatewayRef "default/vllm-lb" failed: Unsupported gateway: gatewayclass gke-l7-global-external-managed does not support inference pools
