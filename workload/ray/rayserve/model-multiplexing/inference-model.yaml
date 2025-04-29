@@ -1,0 +1,19 @@
+apiVersion: inference.networking.x-k8s.io/v1alpha2
+kind: InferenceModel
+metadata:
+  name: gemma
+spec:
+  modelName: /gcs/google/gemma-7b-it
+  criticality: Critical
+  poolRef:
+    name: ray-vllm-models
+---
+apiVersion: inference.networking.x-k8s.io/v1alpha2
+kind: InferenceModel
+metadata:
+  name: llama
+spec:
+  modelName: /gcs/meta-llama/Meta-Llama-3-8B-Instruct
+  criticality: Critical
+  poolRef:
+    name: ray-vllm-models

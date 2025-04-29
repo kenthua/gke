@@ -26,7 +26,8 @@ spec:
     applications:
     - name: llm
       route_prefix: /
-      import_path:  ai-ml.gke-ray.rayserve.llm.model-multiplexing.serve:multi_model
+      #import_path: ai-ml.gke-ray.rayserve.llm.model-multiplexing.serve:multi_model
+      import_path: workload.ray.rayserve.model-multiplexing.serve:multi_model
       deployments:
       - name: MultiModelDeployment
         num_replicas: 1
@@ -34,12 +35,15 @@ spec:
           num_cpus: 2
           # NOTE: num_gpus is set automatically based on TENSOR_PARALLELISM
       runtime_env:
-        working_dir: "https://github.com/GoogleCloudPlatform/kubernetes-engine-samples/archive/main.zip"
+        #working_dir: "https://github.com/GoogleCloudPlatform/kubernetes-engine-samples/archive/main.zip"
+        working_dir: "https://github.com/kenthua/gke/archive/main.zip"
         pip: ["vllm==0.8.4"]
         env_vars:
           MODEL_1_ID: "/gcs/google/gemma-7b-it"
+          #MODEL_1_ID: "google/gemma-7b-it"
           MODEL_1_TENSOR_PARALLELISM: "2"
           MODEL_2_ID: "/gcs/meta-llama/Meta-Llama-3-8B-Instruct"
+          #MODEL_2_ID: "meta-llama/Meta-Llama-3-8B-Instruct"
           MODEL_2_TENSOR_PARALLELISM: "2"
   rayClusterConfig:
     headGroupSpec:
@@ -50,6 +54,8 @@ spec:
           labels:
             ai.gke.io: rayserve
         spec:
+          # nodeSelector:
+          #   cloud.google.com/gke-accelerator: nvidia-l4
           containers:
             - name: ray-head
               image: rayproject/ray-ml:2.45.0.4e641d-py311
@@ -58,10 +64,12 @@ spec:
                   cpu: "2"
                   memory: "8Gi"
                   ephemeral-storage: "10Gi"
+                  # nvidia.com/gpu: "1"
                 requests:
                   cpu: "2"
                   memory: "8Gi"
                   ephemeral-storage: "10Gi"
+                  # nvidia.com/gpu: "1"
               ports:
                 - containerPort: 6379
                   name: gcs-server
@@ -92,6 +100,7 @@ spec:
               gke-gcsfuse/ephemeral-storage-limit: "0"
             labels:
               ai.gke.io: rayserve
+              app: rayserve
           spec:
             containers:
               - name: llm

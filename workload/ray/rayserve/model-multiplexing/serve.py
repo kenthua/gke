@@ -92,6 +92,7 @@ class VLLMDeployment:
         - other fields: the sampling parameters (See `SamplingParams` for details).
         """
         # request_dict = await request.json()
+        # The Inference Gateway requires conformance with OpenAI spec, which requires model, so we take it and pop it. As Ray uses the header to determine the model.
         model = request_dict.pop("model", False)
         prompt = request_dict.pop("prompt")
         stream = request_dict.pop("stream", False)
