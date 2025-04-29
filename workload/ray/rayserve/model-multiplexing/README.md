@@ -26,6 +26,8 @@ The model weights need to be pre-loaded into a GCS bucket, you can use this exam
 Add permissions for the kubernetes service account `ray-serve` access to the bucket
 
 ```shell
+PROJECT_ID=your_project_id
+PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format 'get(projectNumber)')
 BUCKET=your_bucket
 NAMESPACE=default
 KSA=ray-serve
