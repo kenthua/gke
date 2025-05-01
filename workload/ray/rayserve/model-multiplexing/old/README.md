@@ -41,10 +41,8 @@ gcloud storage buckets add-iam-policy-binding gs://${BUCKET} \
 
 - Adjust variables/settings as needed: GCS Bucket, KSA, etc
 
-This is using the newer [LLMConfig/LLMRouter](https://docs.ray.io/en/releases-2.45.0/serve/llm/serving-llms.html) implementation
-
 ```shell
-kubectl apply -f ray-service-llm.yaml
+kubectl apply -f ray-service.yaml
 ```
 
 > NOTE: If downloading from HF, remove GCS references
@@ -62,24 +60,24 @@ Example output
 Status:
   Active Service Status:
     Application Statuses:
-      llm_app:
-        Health Last Update Time:  2025-05-01T01:13:54Z
+      Llm:
+        Health Last Update Time:  2025-04-30T02:28:07Z
         Serve Deployment Statuses:
-          LLMDeployment:--gcs--google--gemma-2-9b-it:
-            Health Last Update Time:  2025-05-01T01:13:54Z
+          Multi Model Deployment:
+            Health Last Update Time:  2025-04-30T02:28:07Z
             Status:                   HEALTHY
-          LLMDeployment:--gcs--meta-llama--Llama-3_1-8B-Instruct:
-            Health Last Update Time:  2025-05-01T01:13:54Z
+          VLLM Deployment:
+            Health Last Update Time:  2025-04-30T02:28:07Z
             Status:                   HEALTHY
-          LLM Router:
-            Health Last Update Time:  2025-05-01T01:13:54Z
+          VLLMDeployment_1:
+            Health Last Update Time:  2025-04-30T02:28:07Z
             Status:                   HEALTHY
         Status:                       RUNNING
-    Ray Cluster Name:                 model-multiplexing-raycluster-f7tpw
+    Ray Cluster Name:                 model-multiplexing-raycluster-l4lwg
     Ray Cluster Status:
       Available Worker Replicas:  2
       Desired CPU:                42
-      Desired GPU:                4
+      Desired GPU:                5
       Desired Memory:             88Gi
       Desired TPU:                0
       Desired Worker Replicas:    2
@@ -90,9 +88,9 @@ Status:
         Metrics:       8080
         Serve:         8000
       Head:
-        Pod IP:             10.252.0.35
-        Service IP:         34.118.230.122
-      Last Update Time:     2025-05-01T01:07:08Z
+        Pod IP:             10.3.128.200
+        Service IP:         34.118.234.245
+      Last Update Time:     2025-04-30T02:26:13Z
       Max Worker Replicas:  4
       Observed Generation:  1
       State:                ready
@@ -224,72 +222,12 @@ Replace the IP and Port to your respective deployment settings.
 ```shell
 IP=$(kubectl get gateway/vllm-lb -o jsonpath='{.status.addresses[0].value}')
 
-curl -i -X POST $IP:80/v1/completions -H 'Content-Type: application/json' -d '{"model": "/gcs/google/gemma-2-9b-it","prompt": "What are the top 5 most popular programming languages? Please be brief."}'
+curl -i -X POST http://$IP:80/ -H 'serve_multiplexed_model_id: /gcs/google/gemma-2-9b-it' -H 'Content-Type: application/json' -d '{"model": "/gcs/google/gemma-2-9b-it","prompt": "What are the top 5 most popular programming languages? Please be brief."}'
 
-curl -i -X POST $IP:80/v1/completions -H 'Content-Type: application/json' -d '{"model": "/gcs/meta-llama/Llama-3.1-8B-Instruct","prompt": "What are the top 5 most popular programming languages? Please be brief."}'
+curl -i -X POST http://$IP:80/ -H 'serve_multiplexed_model_id: /gcs/meta-llama/Llama-3.1-8B-Instruct' -H 'Content-Type: application/json' -d '{"model": "/gcs/meta-llama/Llama-3.1-8B-Instruct","prompt": "What are the top 5 most popular programming languages? Please be brief."}'
 ```
 
 > NOTE: If testing from HF, remove the `/gcs/` prefix.
-
-Output
-
-```json
-{
-  "choices": [
-    {
-      "finish_reason": "stop",
-      "index": 0,
-      "logprobs": {
-        "text_offset": [],
-        "token_logprobs": [],
-        "tokens": [],
-        "top_logprobs": []
-      },
-      "prompt_logprobs": null,
-      "stop_reason": null,
-      "text": "\n\n1. **Python** \n2. **JavaScript**\n3. **Java**\n4. **C#**\n5. **C++**\n\nNote: Popularity rankings can change slightly based on the specific index used. \n"
-    }
-  ],
-  "created": 1746062176,
-  "id": "/gcs/google/gemma-2-9b-it-26c4289c-977e-4a4a-bf7e-5ec45600d2a9",
-  "model": "/gcs/google/gemma-2-9b-it",
-  "object": "text_completion",
-  "usage": {
-    "completion_tokens": 52,
-    "prompt_tokens": 16,
-    "prompt_tokens_details": null,
-    "total_tokens": 68
-  }
-}
-
-{
-  "choices": [
-    {
-      "finish_reason": "stop",
-      "index": 0,
-      "logprobs": {
-        "text_offset": [],
-        "token_logprobs": [],
-        "tokens": [],
-        "top_logprobs": []
-      },
-      "prompt_logprobs": null,
-      "stop_reason": null,
-      "text": " Written by a normal English language user with no expertise in the use of programming languages.\nThe top 5 most popular programming languages are:\n1. Python - easy to learn and often used in data analysis, machine learning, artificial intelligence, and creating web applications.\n2. Java - widely used for web development, Android apps, and games, especially with its large community and varied libraries.\n3. JavaScript - commonly used for building interactive client-side web applications and creating visual effects and dynamic behavior on websites.\n4. C++ - powerful and highly versatile, often used for developing operating systems, games, and high-performance applications.\n5. SQL - responsible for database management and creation, including storing, modifying, and retrieving data.\n\nPlease note: Rankings may vary depending on the source and the specific use case.\n\nWould you like me to elaborate on any of these programming languages?"
-    }
-  ],
-  "created": 1746062332,
-  "id": "/gcs/meta-llama/Llama-3.1-8B-Instruct-48ee36cd-925b-4e10-88b6-4f7e78781c87",
-  "model": "/gcs/meta-llama/Llama-3.1-8B-Instruct",
-  "object": "text_completion",
-  "usage": {
-    "completion_tokens": 174,
-    "prompt_tokens": 16,
-    "prompt_tokens_details": null,
-    "total_tokens": 190
-  }
-}
-```
 
 ## Misc
 

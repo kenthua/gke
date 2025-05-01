@@ -1,0 +1,165 @@
+# Copyright 2024 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ray-serve
+---
+apiVersion: ray.io/v1
+kind: RayService
+metadata:
+  name: model-multiplexing
+spec:
+  serveConfigV2: |
+    applications:
+    - args:
+        llm_configs:
+          - model_loading_config:
+              model_id: /gcs/google/gemma-2-9b-it
+              model_source: /gcs/google/gemma-2-9b-it
+            accelerator_type: L4
+            engine_kwargs:
+              tensor_parallel_size: 2
+            deployment_config:
+              autoscaling_config:
+                min_replicas: 1
+                max_replicas: 2
+          - model_loading_config:
+              model_id: /gcs/meta-llama/Llama-3.1-8B-Instruct
+              model_source: /gcs/meta-llama/Llama-3.1-8B-Instruct
+            accelerator_type: L4
+            engine_kwargs:
+              tensor_parallel_size: 2
+            deployment_config:
+              autoscaling_config:
+                min_replicas: 1
+                max_replicas: 2
+      import_path: ray.serve.llm:build_openai_app
+      name: llm_app
+      route_prefix: "/"
+      runtime_env:
+        pip: ["vllm==0.8.4","ray[serve,llm]==2.45.0"]
+  rayClusterConfig:
+    headGroupSpec:
+      rayStartParams:
+        dashboard-host: "0.0.0.0"
+      template:
+        metadata:
+          labels:
+            ai.gke.io: rayserve
+        spec:
+          # nodeSelector:
+          #   cloud.google.com/gke-accelerator: nvidia-l4
+          containers:
+            - name: ray-head
+              image: rayproject/ray-ml:2.45.0.4e641d-py311
+              resources:
+                limits:
+                  cpu: "2"
+                  memory: "8Gi"
+                  ephemeral-storage: "20Gi"
+                  # nvidia.com/gpu: "1"
+                requests:
+                  cpu: "2"
+                  memory: "8Gi"
+                  ephemeral-storage: "20Gi"
+                  # nvidia.com/gpu: "1"
+              ports:
+                - containerPort: 6379
+                  name: gcs-server
+                - containerPort: 8265
+                  name: dashboard
+                - containerPort: 10001
+                  name: client
+                - containerPort: 8000
+                  name: serve
+              # env:
+              #   - name: HUGGING_FACE_HUB_TOKEN
+              #     valueFrom:
+              #       secretKeyRef:
+              #         name: hugging-face-token-secret
+              #         key: HUGGING_FACE_TOKEN
+    workerGroupSpecs:
+      - replicas: 2
+        minReplicas: 0
+        maxReplicas: 4
+        groupName: gpu-group
+        rayStartParams: {}
+        template:
+          metadata:
+            annotations:
+              gke-gcsfuse/volumes: "true"
+              gke-gcsfuse/cpu-limit: "0"
+              gke-gcsfuse/memory-limit: "0"
+              gke-gcsfuse/ephemeral-storage-limit: "0"
+            labels:
+              ai.gke.io: rayserve
+              app: rayserve
+          spec:
+            containers:
+              - name: llm
+                image: rayproject/ray-ml:2.45.0.4e641d-py311-gpu
+                # env:
+                #   - name: HUGGING_FACE_HUB_TOKEN
+                #     valueFrom:
+                #       secretKeyRef:
+                #         name: hugging-face-token-secret
+                #         key: HUGGING_FACE_TOKEN
+                resources:
+                  limits:
+                    cpu: "20"
+                    memory: "40Gi"
+                    nvidia.com/gpu: "2"
+                  requests:
+                    cpu: "20"
+                    memory: "40Gi"
+                    nvidia.com/gpu: "2"
+                volumeMounts:
+                  - name: gcsfuse
+                    mountPath: /gcs/
+                    readOnly: true
+              # This is second because, with Ray workerGroupSpecs, the 1st container will append the argument "&& ulimit .. && ray start"
+              - name: fetch-safetensors
+                image: busybox
+                command: ["/bin/sh", "-c"]
+                args:
+                  - |
+                    echo "########### $(date) - Starting parallel-fetch-safetensors"
+                    find /gcs/**/**/*safetensors -type f | xargs -I {} -P 15 sh -c 'echo "########### $(date) - Fetching: {}"; dd if={} of=/dev/null'
+                    echo "########### $(date) - Finished parallel-fetch-safetensors"
+                    sleep infinity
+                volumeMounts:
+                - name: gcsfuse
+                  mountPath: /gcs/
+                  readOnly: true
+            volumes:
+              - name: gcsfuse
+                csi:
+                  driver: gcsfuse.csi.storage.gke.io
+                  volumeAttributes:
+                    bucketName: kenthua-ray-serve-bucket
+                    mountOptions: "metadata-cache:ttl-secs:-1,metadata-cache:stat-cache-max-size-mb:-1,metadata-cache:type-cache-max-size-mb:-1,file-cache:max-size-mb:-1,file-cache:cache-file-for-range-read:true,file-cache:enable-parallel-downloads:true,file-system:kernel-list-cache-ttl-secs:-1"#,only-dir:${MODEL_NAME}/${MODEL_VERSION}/"
+                    skipCSIBucketAccessCheck: "true"
+            tolerations:
+            - key: "nvidia.com/gpu"
+              operator: "Exists"
+              effect: "NoSchedule"
+            - key: "on-demand"
+              value: "true"
+              operator: "Equal"
+              effect: "NoSchedule" 
+            serviceAccountName: ray-serve
+            nodeSelector:
+              cloud.google.com/gke-accelerator: nvidia-l4

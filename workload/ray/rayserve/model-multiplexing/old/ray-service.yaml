@@ -26,8 +26,7 @@ spec:
     applications:
     - name: llm
       route_prefix: /
-      #import_path: ai-ml.gke-ray.rayserve.llm.model-multiplexing.serve:multi_model
-      import_path: workload.ray.rayserve.model-multiplexing.serve:multi_model
+      import_path: workload.ray.rayserve.model-multiplexing.old.serve:multi_model
       deployments:
       - name: MultiModelDeployment
         num_replicas: 1
@@ -35,16 +34,12 @@ spec:
           num_cpus: 2
           # NOTE: num_gpus is set automatically based on TENSOR_PARALLELISM
       runtime_env:
-        #working_dir: "https://github.com/GoogleCloudPlatform/kubernetes-engine-samples/archive/main.zip"
         working_dir: "https://github.com/kenthua/gke/archive/main.zip"
         pip: ["vllm==0.8.4"]
         env_vars:
           MODEL_1_ID: "/gcs/google/gemma-2-9b-it"
-          #MODEL_1_ID: "/gcs/google/gemma-7b-it"
-          #MODEL_1_ID: "google/gemma-2-9b-it"
           MODEL_1_TENSOR_PARALLELISM: "2"
           MODEL_2_ID: "/gcs/meta-llama/Llama-3.1-8B-Instruct"
-          #MODEL_2_ID: "meta-llama/Llama-3.1-8B-Instruct"
           MODEL_2_TENSOR_PARALLELISM: "2"
   rayClusterConfig:
     headGroupSpec:
@@ -64,12 +59,12 @@ spec:
                 limits:
                   cpu: "2"
                   memory: "8Gi"
-                  ephemeral-storage: "10Gi"
+                  ephemeral-storage: "20Gi"
                   # nvidia.com/gpu: "1"
                 requests:
                   cpu: "2"
                   memory: "8Gi"
-                  ephemeral-storage: "10Gi"
+                  ephemeral-storage: "20Gi"
                   # nvidia.com/gpu: "1"
               ports:
                 - containerPort: 6379
@@ -147,6 +142,14 @@ spec:
                     bucketName: kenthua-ray-serve-bucket
                     mountOptions: "metadata-cache:ttl-secs:-1,metadata-cache:stat-cache-max-size-mb:-1,metadata-cache:type-cache-max-size-mb:-1,file-cache:max-size-mb:-1,file-cache:cache-file-for-range-read:true,file-cache:enable-parallel-downloads:true,file-system:kernel-list-cache-ttl-secs:-1"#,only-dir:${MODEL_NAME}/${MODEL_VERSION}/"
                     skipCSIBucketAccessCheck: "true"
+            tolerations:
+            - key: "nvidia.com/gpu"
+              operator: "Exists"
+              effect: "NoSchedule"
+            - key: "on-demand"
+              value: "true"
+              operator: "Equal"
+              effect: "NoSchedule" 
             serviceAccountName: ray-serve
             nodeSelector:
               cloud.google.com/gke-accelerator: nvidia-l4
