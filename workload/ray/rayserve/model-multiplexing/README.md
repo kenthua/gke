@@ -12,6 +12,17 @@ Install the KubeRay operator or enable the GKE Ray add-on
 - https://github.com/ray-project/kuberay/blob/master/helm-chart/kuberay-operator/README.md
 - https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html
 
+- Update your existing cluster with the [RayOperator enabled](https://cloud.google.com/kubernetes-engine/docs/add-on/ray-on-gke/how-to/enable-ray-on-gke#gcloud)
+
+```shell
+#example
+gcloud container clusters update $CLUSTER_NAME \
+  --location $REGION/ZONE \
+  --update-addons=RayOperator=ENABLED
+```
+
+- Alternative, manually install the KubeRay operator into your cluster
+
 ```shell
 helm repo add kuberay https://ray-project.github.io/kuberay-helm/
 helm install kuberay-operator kuberay/kuberay-operator --version 1.1.0
@@ -219,14 +230,16 @@ kubectl get gateway/vllm-lb -o jsonpath='{.status.addresses[0].address}'
 
 Replace the IP and Port to your respective deployment settings.
 
-> NOTE: Ray Service uses the [HTTP header](https://docs.ray.io/en/latest/serve/model-multiplexing.html#writing-a-multiplexed-deployment) `serve_multiplexed_model_id` to designate the model to be served. This is propagated from the EPP to the ray serve endpoint.
-
 ```shell
 IP=$(kubectl get gateway/vllm-lb -o jsonpath='{.status.addresses[0].value}')
 
-curl -i -X POST $IP:80/v1/completions -H 'Content-Type: application/json' -d '{"model": "/gcs/google/gemma-2-9b-it","prompt": "What are the top 5 most popular programming languages? Please be brief."}'
+curl -i -X POST $IP:80/v1/completions \
+  -H 'Content-Type: application/json' \
+  -d '{"model": "/gcs/google/gemma-2-9b-it","prompt": "What are the top 5 most popular programming languages? Please be brief."}'
 
-curl -i -X POST $IP:80/v1/completions -H 'Content-Type: application/json' -d '{"model": "/gcs/meta-llama/Llama-3.1-8B-Instruct","prompt": "What are the top 5 most popular programming languages? Please be brief."}'
+curl -i -X POST $IP:80/v1/completions \
+  -H 'Content-Type: application/json' \
+  -d '{"model": "/gcs/meta-llama/Llama-3.1-8B-Instruct","prompt": "What are the top 5 most popular programming languages? Please be brief."}'
 ```
 
 > NOTE: If testing from HF, remove the `/gcs/` prefix.
