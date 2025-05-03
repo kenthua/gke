@@ -25,7 +25,7 @@ gcloud container clusters update $CLUSTER_NAME \
 
 ```shell
 helm repo add kuberay https://ray-project.github.io/kuberay-helm/
-helm install kuberay-operator kuberay/kuberay-operator --version 1.1.0
+helm install kuberay-operator kuberay/kuberay-operator --version 1.3.2
 ```
 
 ### Optional, if you want to preload the models from a GCS bucket
@@ -308,7 +308,7 @@ Output
 
 Set your HuggingFace token to pull the data
 
-If you are not pulling from GCS and directly from HF, set your secret
+- If you are not pulling from GCS and directly from HF, set your secret
 
 ```shell
 export HF_TOKEN=
@@ -317,6 +317,8 @@ kubectl create secret generic hugging-face-token-secret \
     --dry-run=client -o yaml | k apply  -f -
 ```
 
+- Setting up a proxyonly subnet for regional internal/external LBs for the gateway
+
 ```shell
 gcloud compute networks subnets create kh-central1-proxyonly \
     --purpose=REGIONAL_MANAGED_PROXY \
@@ -324,4 +326,24 @@ gcloud compute networks subnets create kh-central1-proxyonly \
     --region=us-central1 \
     --network=kenthua-vpc \
     --range=10.0.100.0/23
+```
+
+- Ray Serve Autoscaler, which will also trigger the Ray in-tree autoscaler for workergroups
+
+Scaling Up
+
+```shell
+INFO 2025-05-02 16:03:20,094 controller 521 -- Replica(id='ehddpq4d', deployment='LLMRouter', app='llm_app') started successfully on node 'd0c51419f7606128f6ace540631062143c6495a304a1e16625857a46' after 282.8s (PID: 1751). Replica constructor, reconfigure method, and initial health check took 0.1s.
+INFO 2025-05-02 16:42:12,905 controller 521 -- Upscaling Deployment(name='LLMDeployment:--gcs--meta-llama--Llama-3_2-1B-Instruct', app='llm_app') from 1 to 4 replicas. Current ongoing requests: 4.88, current running replicas: 1.
+INFO 2025-05-02 16:42:12,907 controller 521 -- Adding 3 replicas to Deployment(name='LLMDeployment:--gcs--meta-llama--Llama-3_2-1B-Instruct', app='llm_app').
+INFO 2025-05-02 16:42:12,907 controller 521 -- Starting Replica(id='85pivh7x', deployment='LLMDeployment:--gcs--meta-llama--Llama-3_2-1B-Instruct', app='llm_app').
+```
+
+Scaling Down
+
+```shell
+INFO 2025-05-02 16:51:20,294 controller 521 -- Replica(id='dkjrdp2p', deployment='LLMDeployment:--gcs--meta-llama--Llama-3_2-1B-Instruct', app='llm_app') started successfully on node '44c91631257e4c819fb9991e5898a19ffb01d6e05adb2773b60a40d6' after 547.4s (PID: 824). Replica constructor, reconfigure method, and initial health check took 95.3s.
+INFO 2025-05-02 17:03:32,417 controller 521 -- Downscaling Deployment(name='LLMDeployment:--gcs--meta-llama--Llama-3_2-1B-Instruct', app='llm_app') from 4 to 1 replicas. Current ongoing requests: 0.93, current running replicas: 4.
+INFO 2025-05-02 17:03:32,419 controller 521 -- Removing 3 replicas from Deployment(name='LLMDeployment:--gcs--meta-llama--Llama-3_2-1B-Instruct', app='llm_app').
+INFO 2025-05-02 17:03:32,421 controller 521 -- Stopping Replica(id='a7myhweb', deployment='LLMDeployment:--gcs--meta-llama--Llama-3_2-1B-Instruct', app='llm_app') (currently ReplicaState.RUNNING).
 ```

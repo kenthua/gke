@@ -17,3 +17,23 @@ spec:
   criticality: Critical
   poolRef:
     name: ray-vllm-models
+---
+apiVersion: inference.networking.x-k8s.io/v1alpha2
+kind: InferenceModel
+metadata:
+  name: llama-3.2
+spec:
+  modelName: /gcs/meta-llama/Llama-3.2-1B-Instruct
+  criticality: Critical
+  poolRef:
+    name: ray-vllm-models
+---
+apiVersion: inference.networking.x-k8s.io/v1alpha2
+kind: InferenceModel
+metadata:
+  name: gemma-3
+spec:
+  modelName: /gcs/google/gemma-3-4b-it
+  criticality: Critical
+  poolRef:
+    name: ray-vllm-models
