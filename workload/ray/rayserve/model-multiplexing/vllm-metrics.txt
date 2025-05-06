@@ -1,0 +1,83 @@
+# curl --silent 10.252.5.10:8080/metrics | grep vllm
+ray_component_cpu_percentage{Component="ray::_get_vllm_engine_config",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",ip="10.252.5.10",pid=""} 0.0
+ray_component_mem_shared_bytes{Component="ray::_get_vllm_engine_config",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",ip="10.252.5.10",pid=""} 0.0
+ray_component_rss_mb{Component="ray::_get_vllm_engine_config",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",ip="10.252.5.10",pid=""} 0.0
+ray_component_uss_mb{Component="ray::_get_vllm_engine_config",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",ip="10.252.5.10",pid=""} 0.0
+ray_component_num_fds{Component="ray::_get_vllm_engine_config",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",ip="10.252.5.10",pid=""} 0.0
+ray_tasks{Component="raylet",IsRetry="0",JobId="",Name="_get_vllm_engine_config",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Source="dependency_manager",State="PENDING_NODE_ASSIGNMENT",Version="2.45.0",WorkerId=""} 0.0
+ray_tasks{Component="raylet",IsRetry="0",JobId="",Name="_get_vllm_engine_config",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Source="dependency_manager",State="PENDING_ARGS_FETCH",Version="2.45.0",WorkerId=""} 0.0
+ray_tasks{Component="raylet",IsRetry="0",JobId="",Name="_get_vllm_engine_config",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Source="dependency_manager",State="PENDING_OBJ_STORE_MEM_AVAIL",Version="2.45.0",WorkerId=""} 0.0
+ray_tasks{Component="core_worker",IsRetry="0",JobId="",Name="_get_vllm_engine_config",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Source="owner",State="PENDING_NODE_ASSIGNMENT",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 0.0
+ray_tasks{Component="core_worker",IsRetry="0",JobId="",Name="_get_vllm_engine_config",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Source="owner",State="PENDING_ARGS_AVAIL",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 0.0
+ray_tasks{Component="core_worker",IsRetry="0",JobId="",Name="_get_vllm_engine_config",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Source="owner",State="SUBMITTED_TO_WORKER",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 0.0
+ray_tasks{Component="core_worker",IsRetry="0",JobId="",Name="_get_vllm_engine_config",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Source="owner",State="FINISHED",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 1.0
+# HELP ray_vllm_engine_stats_time_in_queue_ms Time a request spends in the queue first forward pass not included (ms).
+# TYPE ray_vllm_engine_stats_time_in_queue_ms histogram
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="10.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="50.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="100.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="250.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="500.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="1000.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="1500.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="2500.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="5000.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="10000.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="15000.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="25000.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="50000.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="75000.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="100000.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="200000.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="300000.0"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_bucket{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3",le="+Inf"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_count{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 4.0
+ray_vllm_engine_stats_time_in_queue_ms_sum{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 0.004640340805053711
+# HELP ray_vllm_engine_stats_total_requests_finished_total total finished requests.
+# TYPE ray_vllm_engine_stats_total_requests_finished_total counter
+ray_vllm_engine_stats_total_requests_finished_total{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 4.0
+# HELP ray_vllm_engine_stats_total_requests_finished (DEPRECATED, use ray_vllm_engine_stats_total_requests_finished_total metric instead) total finished requests.
+# TYPE ray_vllm_engine_stats_total_requests_finished gauge
+ray_vllm_engine_stats_total_requests_finished{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 4.0
+# HELP ray_vllm_arg_usage_stats_stop_usage_count_total total number of usage of stop.
+# TYPE ray_vllm_arg_usage_stats_stop_usage_count_total counter
+ray_vllm_arg_usage_stats_stop_usage_count_total{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 5.0
+# HELP ray_vllm_arg_usage_stats_stop_usage_count (DEPRECATED, use ray_vllm_arg_usage_stats_stop_usage_count_total metric instead) total number of usage of stop.
+# TYPE ray_vllm_arg_usage_stats_stop_usage_count gauge
+ray_vllm_arg_usage_stats_stop_usage_count{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 5.0
+# HELP ray_vllm_engine_stats_total_requests_submitted_total total submitted requests.
+# TYPE ray_vllm_engine_stats_total_requests_submitted_total counter
+ray_vllm_engine_stats_total_requests_submitted_total{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 5.0
+# HELP ray_vllm_engine_stats_total_requests_submitted (DEPRECATED, use ray_vllm_engine_stats_total_requests_submitted_total metric instead) total submitted requests.
+# TYPE ray_vllm_engine_stats_total_requests_submitted gauge
+ray_vllm_engine_stats_total_requests_submitted{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 5.0
+# HELP ray_vllm_arg_usage_stats_best_of_usage_count_total total number of usage of best of.
+# TYPE ray_vllm_arg_usage_stats_best_of_usage_count_total counter
+ray_vllm_arg_usage_stats_best_of_usage_count_total{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 5.0
+# HELP ray_vllm_arg_usage_stats_best_of_usage_count (DEPRECATED, use ray_vllm_arg_usage_stats_best_of_usage_count_total metric instead) total number of usage of best of.
+# TYPE ray_vllm_arg_usage_stats_best_of_usage_count gauge
+ray_vllm_arg_usage_stats_best_of_usage_count{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 5.0
+# HELP ray_vllm_engine_stats_total_requests_started_total total started requests.
+# TYPE ray_vllm_engine_stats_total_requests_started_total counter
+ray_vllm_engine_stats_total_requests_started_total{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 5.0
+# HELP ray_vllm_engine_stats_total_requests_started (DEPRECATED, use ray_vllm_engine_stats_total_requests_started_total metric instead) total started requests.
+# TYPE ray_vllm_engine_stats_total_requests_started gauge
+ray_vllm_engine_stats_total_requests_started{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 5.0
+# HELP ray_vllm_engine_stats_num_current_running_requests current running requests.
+# TYPE ray_vllm_engine_stats_num_current_running_requests gauge
+ray_vllm_engine_stats_num_current_running_requests{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 0.0
+# HELP ray_vllm_arg_usage_stats_max_tokens_usage_count_total total number of usage of max tokens.
+# TYPE ray_vllm_arg_usage_stats_max_tokens_usage_count_total counter
+ray_vllm_arg_usage_stats_max_tokens_usage_count_total{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 5.0
+# HELP ray_vllm_arg_usage_stats_max_tokens_usage_count (DEPRECATED, use ray_vllm_arg_usage_stats_max_tokens_usage_count_total metric instead) total number of usage of max tokens.
+# TYPE ray_vllm_arg_usage_stats_max_tokens_usage_count gauge
+ray_vllm_arg_usage_stats_max_tokens_usage_count{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 5.0
+# HELP ray_vllm_engine_stats_num_current_pending_requests current pending requests.
+# TYPE ray_vllm_engine_stats_num_current_pending_requests gauge
+ray_vllm_engine_stats_num_current_pending_requests{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 0.0
+# HELP ray_vllm_engine_stats_total_requests_cancelled_total total cancelled requests.
+# TYPE ray_vllm_engine_stats_total_requests_cancelled_total counter
+ray_vllm_engine_stats_total_requests_cancelled_total{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 1.0
+# HELP ray_vllm_engine_stats_total_requests_cancelled (DEPRECATED, use ray_vllm_engine_stats_total_requests_cancelled_total metric instead) total cancelled requests.
+# TYPE ray_vllm_engine_stats_total_requests_cancelled gauge
+ray_vllm_engine_stats_total_requests_cancelled{Component="core_worker",NodeAddress="10.252.5.10",SessionName="session_2025-05-06_15-35-03_689797_1",Version="2.45.0",WorkerId="b6df82788bd06bcd35d2e5cbdd3abb58091d5f7ca4e91992e4ad85a3"} 1.0
