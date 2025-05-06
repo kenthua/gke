@@ -366,3 +366,9 @@ Table:
                                                                                                                                   node:10.252.7.11: 1.0
                                                                                                                                   object_store_memory: 11.959 GiB
 ```
+
+Is this the actual reason in that it think it doesn't need to, but GPU from `tensor_parallel_size` should trigger it.
+
+```shell
+1.734723475976807e-18/1.0 accelerator_type:L4 (0.0 used of 0.002 reserved in placement groups)
+```
