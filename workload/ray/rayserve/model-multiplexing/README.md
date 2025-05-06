@@ -347,3 +347,22 @@ INFO 2025-05-02 17:03:32,417 controller 521 -- Downscaling Deployment(name='LLMD
 INFO 2025-05-02 17:03:32,419 controller 521 -- Removing 3 replicas from Deployment(name='LLMDeployment:--gcs--meta-llama--Llama-3_2-1B-Instruct', app='llm_app').
 INFO 2025-05-02 17:03:32,421 controller 521 -- Stopping Replica(id='a7myhweb', deployment='LLMDeployment:--gcs--meta-llama--Llama-3_2-1B-Instruct', app='llm_app') (currently ReplicaState.RUNNING).
 ```
+
+- Autoscaling
+
+In-tree Ray Worker, when using the `spec.serveConfigV2.applications[0].args.llm_configs[0].accelerator_type=L4`,
+it references the requirement of `0.001` and the worker/node provides the resource `accelerator_type:L4: 1.0`, worker autoscale is not triggered.
+
+As a result, `accelerator_type` while it, scales the workload replicas, up to the available workers. New workers are not triggered.
+
+```shell
+Table:
+------------------------------
+    NODE_ID                                                   NODE_IP      IS_HEAD_NODE    STATE    STATE_MESSAGE    NODE_NAME    RESOURCES_TOTAL                  LABELS
+ 0  1bef713dbcd1eddf12a7c0923afd7f02ba1c7a65bf478dd0fe4682e5  10.252.7.11  False           ALIVE                     10.252.7.11  CPU: 20.0                        ray.io/node_id: 1bef713dbcd1eddf12a7c0923afd7f02ba1c7a65bf478dd0fe4682e5
+                                                                                                                                  GPU: 2.0
+                                                                                                                                  accelerator_type:L4: 1.0
+                                                                                                                                  memory: 40.000 GiB
+                                                                                                                                  node:10.252.7.11: 1.0
+                                                                                                                                  object_store_memory: 11.959 GiB
+```
