@@ -33,7 +33,6 @@ spec:
         llm_configs:
           - model_loading_config:
               model_id: /gcs/meta-llama/Llama-3.2-1B-Instruct
-              model_source: /gcs/meta-llama/Llama-3.2-1B-Instruct
             engine_kwargs:
               tensor_parallel_size: 1
             deployment_config:
@@ -44,7 +43,6 @@ spec:
                 max_replicas: 4
           # - model_loading_config:
           #     model_id: /gcs/google/gemma-3-4b-it
-          #     model_source: /gcs/google/gemma-3-4b-it
           #   engine_kwargs:
           #     tensor_parallel_size: 1
           #     max_model_len: 4096
@@ -55,7 +53,6 @@ spec:
           #       max_replicas: 4
           - model_loading_config:
               model_id: /gcs/google/gemma-2-9b-it
-              model_source: /gcs/google/gemma-2-9b-it
             engine_kwargs:
               tensor_parallel_size: 2
             deployment_config:
@@ -64,7 +61,6 @@ spec:
                 max_replicas: 2
           - model_loading_config:
               model_id: /gcs/meta-llama/Llama-3.1-8B-Instruct
-              model_source: /gcs/meta-llama/Llama-3.1-8B-Instruct
             engine_kwargs:
               tensor_parallel_size: 2
             deployment_config:
