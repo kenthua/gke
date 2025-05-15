@@ -55,7 +55,7 @@ This is using the newer [LLMConfig/LLMRouter](https://docs.ray.io/en/releases-2.
 kubectl apply -f ray-service-llm.yaml
 ```
 
-> NOTE: If downloading from HF, use `kubectl apply -f ray-service-llm-hf.yaml`
+> NOTE: If downloading from HF, create [token secret](https://github.com/kenthua/gke/tree/main/workload/ray/rayserve/model-multiplexing#misc), use `kubectl apply -f ray-service-llm-hf.yaml`
 > NOTE: The `fetch-safetensors` container is [second](https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/config.html#containers) on the `workerGroupSpecs` because Ray will automatically inject `ray start` as an argument to the command which will cause the startup to fail. This can be [overwritten](https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/pod-command.html) at a cluster level.
 
 - Check the service deployment status
@@ -212,6 +212,8 @@ kubectl patch healthcheckpolicy \
 ```shell
 kubectl apply -f inference-model.yaml
 ```
+
+> NOTE: If pulling directly from HF, use `kubectl apply -f inference-model-hf.yaml`
 
 - Deploy Gateway and HTTPRoute objects for the Inference Gateway
 
