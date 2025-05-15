@@ -7,10 +7,28 @@ References:
 
 ## Getting started
 
-Install the KubeRay operator or enable the GKE Ray add-on
+- Deploy a GKE Autopilot cluster
 
-- https://github.com/ray-project/kuberay/blob/master/helm-chart/kuberay-operator/README.md
-- https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html
+```shell
+CLUSTER_NAME=mycluster
+PROJECT_ID=yourproject
+REGION=us-central1
+
+gcloud beta container clusters create-auto $CLUSTER_NAME \
+  --project $PROJECT_ID \
+  --region $REGION \
+  --release-channel "rapid" \
+  --enable-dns-access \
+  --enable-ray-operator \
+  --enable-ray-cluster-logging \
+  --enable-ray-cluster-monitoring \
+  --auto-monitoring-scope=ALL
+```
+
+- Install the KubeRay operator or enable the GKE Ray add-on
+
+  - https://github.com/ray-project/kuberay/blob/master/helm-chart/kuberay-operator/README.md
+  - https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html
 
 - Update your existing cluster with the [RayOperator enabled](https://cloud.google.com/kubernetes-engine/docs/add-on/ray-on-gke/how-to/enable-ray-on-gke#gcloud)
 
@@ -58,7 +76,7 @@ This is using the newer [LLMConfig/LLMRouter](https://docs.ray.io/en/releases-2.
 kubectl apply -f ray-service-llm.yaml
 ```
 
-> NOTE: If downloading from HF, remove GCS references
+> NOTE: If downloading from HF, use `kubectl apply -f ray-service-llm-hf.yaml`
 > NOTE: The `fetch-safetensors` container is [second](https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/config.html#containers) on the `workerGroupSpecs` because Ray will automatically inject `ray start` as an argument to the command which will cause the startup to fail. This can be [overwritten](https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/pod-command.html) at a cluster level.
 
 - Check the service deployment status
@@ -306,9 +324,9 @@ Output
 
 ## Misc
 
-Set your HuggingFace token to pull the data
+- Set your HuggingFace token to pull the data
 
-- If you are not pulling from GCS and directly from HF, set your secret
+If you are not pulling from GCS and directly from HF, set your secret
 
 ```shell
 export HF_TOKEN=
