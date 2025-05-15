@@ -25,27 +25,6 @@ gcloud beta container clusters create-auto $CLUSTER_NAME \
   --auto-monitoring-scope=ALL
 ```
 
-- Install the KubeRay operator or enable the GKE Ray add-on
-
-  - https://github.com/ray-project/kuberay/blob/master/helm-chart/kuberay-operator/README.md
-  - https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html
-
-- Update your existing cluster with the [RayOperator enabled](https://cloud.google.com/kubernetes-engine/docs/add-on/ray-on-gke/how-to/enable-ray-on-gke#gcloud)
-
-```shell
-#example
-gcloud container clusters update $CLUSTER_NAME \
-  --location $REGION/ZONE \
-  --update-addons=RayOperator=ENABLED
-```
-
-- Alternative, manually install the KubeRay operator into your cluster
-
-```shell
-helm repo add kuberay https://ray-project.github.io/kuberay-helm/
-helm install kuberay-operator kuberay/kuberay-operator --version 1.3.2
-```
-
 ### Optional, if you want to preload the models from a GCS bucket
 
 The model weights need to be pre-loaded into a GCS bucket, you can use this example script to load the model weights into your bucket
@@ -323,6 +302,29 @@ Output
 ```
 
 ## Misc
+
+- KubeRay Operator Options
+
+  Install the KubeRay operator or enable the GKE Ray add-on (references)
+
+  - https://github.com/ray-project/kuberay/blob/master/helm-chart/kuberay-operator/README.md
+  - https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html
+
+  - Update your existing cluster with the [RayOperator enabled](https://cloud.google.com/kubernetes-engine/docs/add-on/ray-on-gke/how-to/enable-ray-on-gke#gcloud)
+
+  ```shell
+  #example
+  gcloud container clusters update $CLUSTER_NAME \
+    --location $REGION/ZONE \
+    --update-addons=RayOperator=ENABLED
+  ```
+
+  - Alternative, manually install the KubeRay operator into your cluster
+
+  ```shell
+  helm repo add kuberay https://ray-project.github.io/kuberay-helm/
+  helm install kuberay-operator kuberay/kuberay-operator --version 1.3.2
+  ```
 
 - Set your HuggingFace token to pull the data
 
