@@ -101,17 +101,14 @@ spec:
           restartPolicy: Never
           containers:
             - name: ray-head
-              #image: rayproject/ray-ml:2.46.0.0e19ea-py311-cpu
               image: rayproject/ray-llm:2.46.0-py311-cu124
               resources:
                 limits:
                   cpu: "2"
                   memory: "8Gi"
-                  ephemeral-storage: "10Gi"
                 requests:
                   cpu: "2"
                   memory: "8Gi"
-                  ephemeral-storage: "10Gi"
               ports:
                 - containerPort: 6379
                   name: gcs-server
