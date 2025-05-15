@@ -22,11 +22,6 @@ kind: RayService
 metadata:
   name: model-multiplexing
 spec:
-  # Specifying accelerator_type: L4, creates a requirement for accelerator_type:L4, which
-  # will create new replicas for existing workerGroup resources. the ray serve autoscaler works
-  # Since accelerator_type:L4 is not a characteristic of the workerGroup, the autoscaling 
-  # of the cluster is not triggered
-  # Specifying deployment_config.ray_actor_options.num_gpus causes each process to require a GPU
   serveConfigV2: |
     applications:
     - args:
@@ -35,6 +30,7 @@ spec:
               model_id: /gcs/meta-llama/Llama-3.2-1B-Instruct
             engine_kwargs:
               tensor_parallel_size: 1
+            accelerator_type: L4
             deployment_config:
               max_ongoing_requests: 5
               autoscaling_config:
@@ -46,6 +42,7 @@ spec:
           #   engine_kwargs:
           #     tensor_parallel_size: 1
           #     max_model_len: 4096
+          #   accelerator_type: L4
           #   deployment_config:
           #     autoscaling_config:
           #       target_ongoing_requests: 1
@@ -55,6 +52,7 @@ spec:
               model_id: /gcs/google/gemma-2-9b-it
             engine_kwargs:
               tensor_parallel_size: 2
+            accelerator_type: L4
             deployment_config:
               autoscaling_config:
                 min_replicas: 1
@@ -63,6 +61,7 @@ spec:
               model_id: /gcs/meta-llama/Llama-3.1-8B-Instruct
             engine_kwargs:
               tensor_parallel_size: 2
+            accelerator_type: L4
             deployment_config:
               autoscaling_config:
                 min_replicas: 1
@@ -120,9 +119,9 @@ spec:
                   name: client
                 - containerPort: 8000
                   name: serve
-              env:
-                - name: RAY_enable_autoscaler_v2
-                  value: "1"
+              # env:
+              #   - name: RAY_enable_autoscaler_v2
+              #     value: "1"
     workerGroupSpecs:
       - replicas: 1
         # Setting this to 0, when autoscaling is turned on, will scale
@@ -130,7 +129,8 @@ spec:
         minReplicas: 1
         maxReplicas: 4
         groupName: gpu-group
-        rayStartParams: {}
+        rayStartParams:
+          resources: '"{\"accelerator_type:L4\": 2}"'
         template:
           metadata:
             annotations:
