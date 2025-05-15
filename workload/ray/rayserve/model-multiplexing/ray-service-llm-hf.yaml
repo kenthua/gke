@@ -117,9 +117,6 @@ spec:
                   name: client
                 - containerPort: 8000
                   name: serve
-              env:
-                - name: RAY_enable_autoscaler_v2
-                  value: "1"
     workerGroupSpecs:
       - replicas: 1
         # Setting this to 0, when autoscaling is turned on, will scale
