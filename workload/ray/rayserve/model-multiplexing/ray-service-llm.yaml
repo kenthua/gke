@@ -71,7 +71,7 @@ spec:
       name: llm_app
       route_prefix: "/"
       runtime_env:
-        # worker dependency for httpx, at least with 2.45
+        # worker dependency for httpx, at least with 2.46
         pip: ["httpx==0.28.1"]
   rayClusterConfig:
     enableInTreeAutoscaling: true
@@ -101,7 +101,7 @@ spec:
           restartPolicy: Never
           containers:
             - name: ray-head
-              image: rayproject/ray-ml:2.45.0.4e641d-py311
+              image: rayproject/ray-llm:2.46.0-py311-cu124
               resources:
                 limits:
                   cpu: "2"
@@ -123,11 +123,6 @@ spec:
               env:
                 - name: RAY_enable_autoscaler_v2
                   value: "1"
-              #   - name: HUGGING_FACE_HUB_TOKEN
-              #     valueFrom:
-              #       secretKeyRef:
-              #         name: hugging-face-token-secret
-              #         key: HUGGING_FACE_TOKEN
     workerGroupSpecs:
       - replicas: 1
         # Setting this to 0, when autoscaling is turned on, will scale
@@ -150,8 +145,7 @@ spec:
             restartPolicy: Never
             containers:
               - name: llm
-                # this image has ray[llm]
-                image: rayproject/ray-llm:2.45.0-py311-cu124
+                image: rayproject/ray-llm:2.46.0-py311-cu124
                 # env:
                 #   - name: HUGGING_FACE_HUB_TOKEN
                 #     valueFrom:
