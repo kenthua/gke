@@ -182,7 +182,7 @@ spec:
                   driver: gcsfuse.csi.storage.gke.io
                   volumeAttributes:
                     bucketName: kenthua-ray-serve-bucket
-                    mountOptions: "metadata-cache:ttl-secs:-1,metadata-cache:stat-cache-max-size-mb:-1,metadata-cache:type-cache-max-size-mb:-1,file-cache:max-size-mb:-1,file-cache:cache-file-for-range-read:true,file-cache:enable-parallel-downloads:true,file-system:kernel-list-cache-ttl-secs:-1"#,only-dir:${MODEL_NAME}/${MODEL_VERSION}/"
+                    mountOptions: "metadata-cache:ttl-secs:-1,metadata-cache:stat-cache-max-size-mb:-1,metadata-cache:type-cache-max-size-mb:-1,file-cache:max-size-mb:-1,file-cache:cache-file-for-range-read:true,file-cache:enable-parallel-downloads:true,file-system:kernel-list-cache-ttl-secs:-1,gcs-connection:client-protocol:grpc"#,only-dir:${MODEL_NAME}/${MODEL_VERSION}/"
                     skipCSIBucketAccessCheck: "true"
             tolerations:
             - key: "nvidia.com/gpu"
