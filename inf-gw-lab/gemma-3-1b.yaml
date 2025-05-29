@@ -106,6 +106,9 @@ spec:
     name: vllm-gemma-3-1b
   minReplicas: 1
   maxReplicas: 2
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 60
   metrics:
     - type: External
       external:
