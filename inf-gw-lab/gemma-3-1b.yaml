@@ -100,17 +100,20 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: vllm-gemma-3-1b
 spec:
-  maxReplicas: 2
-  metrics:
-    - pods:
-        metric:
-          name: prometheus.googleapis.com|vllm:num_requests_waiting|gauge
-        target:
-          averageValue: 10
-          type: AverageValue
-      type: Pods
-  minReplicas: 1
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: vllm-gemma-3-1b
+  minReplicas: 1
+  maxReplicas: 2
+  metrics:
+    - type: External
+      external:
+        metric:
+          name: prometheus.googleapis.com|inference_pool_average_queue_size|gauge
+          selector:
+            matchLabels:
+              metric.labels.name: vllm-gemma-3-1b
+        target:
+          type: AverageValue
+          averageValue: 10
