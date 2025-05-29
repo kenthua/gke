@@ -113,10 +113,10 @@ spec:
     - type: External
       external:
         metric:
-          name: prometheus.googleapis.com|inference_pool_average_queue_size|gauge
+          name: prometheus.googleapis.com|inference_pool_average_kv_cache_utilization|gauge
           selector:
             matchLabels:
               metric.labels.name: vllm-gemma-3-1b
         target:
           type: AverageValue
-          averageValue: 10
+          averageValue: 10m
