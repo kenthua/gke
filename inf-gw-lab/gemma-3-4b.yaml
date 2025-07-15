@@ -20,12 +20,12 @@ spec:
             requests:
               cpu: "2"
               memory: "25Gi"
-              ephemeral-storage: 10Gi
+              ephemeral-storage: 20Gi
               nvidia.com/gpu: "1"
             limits:
               cpu: "2"
               memory: "25Gi"
-              ephemeral-storage: 10Gi
+              ephemeral-storage: 20Gi
               nvidia.com/gpu: "1"
           args:
             - --model=$(MODEL)
