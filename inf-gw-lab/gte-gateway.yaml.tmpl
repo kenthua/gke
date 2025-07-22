@@ -1,0 +1,28 @@
+kind: GCPTrafficExtension
+apiVersion: networking.gke.io/v1
+metadata:
+  name: my-model-armor-extension
+spec:
+  targetRefs:
+  - group: "gateway.networking.k8s.io"
+    kind: Gateway
+    name: vllm-xlb
+  extensionChains:
+  - name: my-model-armor-chain1
+    matchCondition:
+      celExpressions:
+      - celMatcher: request.path.startsWith("/")
+    extensions:
+    - name: my-model-armor-service
+      supportedEvents:
+      - RequestHeaders
+      - RequestBody
+      - RequestTrailers
+      - ResponseHeaders
+      - ResponseBody
+      - ResponseTrailers
+      timeout: 1s
+      failOpen: false
+      googleAPIServiceName: "modelarmor.$LOCATION.rep.googleapis.com"
+      metadata:
+        model_armor_settings: '[{"model": "$MODEL","model_response_template_id": "projects/$PROJECT_ID/locations/$LOCATION/templates/$MODEL_ARMOR_TEMPLATE_NAME","user_prompt_template_id": "projects/$PROJECT_ID/locations/$LOCATION/templates/$MODEL_ARMOR_TEMPLATE_NAME"}]'
