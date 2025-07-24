@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "### Set env"
 export PROJECT_ID=$(gcloud config get-value project)
 export MODEL_ARMOR_TEMPLATE_NAME=llm

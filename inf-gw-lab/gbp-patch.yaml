@@ -1,0 +1,4 @@
+spec:
+  default:
+    securityPolicy: allow-users-policy
+
