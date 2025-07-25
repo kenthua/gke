@@ -13,7 +13,7 @@ gcloud compute security-policies create allow-users-policy \
 echo "### Update the deny rule"
 gcloud compute security-policies rules update 2147483647 \
   --security-policy allow-users-policy \
-  --action "deny-all-404" \
+  --action "deny-404" \
   --region $LOCATION
 
 echo "### Create the allow rule"
@@ -27,4 +27,4 @@ gcloud compute security-policies rules create 1000 \
 echo "### Patch the GCPBackendPolicy"
 kubectl patch gcpbackendpolicy vllm-gemma-3-1b \
   --type merge \
-  --patch-file patch.yaml
+  --patch-file gbp-patch.yaml
