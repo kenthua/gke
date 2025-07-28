@@ -12,6 +12,9 @@ export LOCATION=$(gcloud compute project-info describe \
 echo "### Enable model armor API"
 gcloud services enable modelarmor.googleapis.com --quiet
 
+echo "### Sleep 30s for model armor API"
+sleep 30
+
 echo "### Set default model armor API location"
 gcloud config set api_endpoint_overrides/modelarmor \
 "https://modelarmor.$LOCATION.rep.googleapis.com/"
