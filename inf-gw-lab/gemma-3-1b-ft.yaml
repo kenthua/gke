@@ -1,0 +1,159 @@
+# PROJECT_ID=$GOOGLE_CLOUD_PROJECT
+# REGION=$(gcloud compute project-info describe \
+#  --format="value(commonInstanceMetadata.items[google-compute-default-region])")
+# PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format 'get(projectNumber)')
+# BUCKET=$PROJECT_ID-data
+# # User entry
+# MODEL_PATH=model-source
+# BUCKET_SOURCE=bucket-source
+
+# # Create Bucket
+# gcloud storage buckets create gs://$BUCKET \
+#   --project $PROJECT_ID \
+#   --default-storage-class STANDARD \
+#   --uniform-bucket-level-access \
+#   --soft-delete-duration 0 \
+#   --enable-hierarchical-namespace \
+#   --location=$REGION
+
+# # Copy data from shared bucket
+# gcloud storage cp -R \
+#   gs://$BUCKET_SOURCE/$MODEL_PATH \
+#   gs://$BUCKET/$MODEL_PATH
+
+# # Set permissions for GKE to access the bucket
+# gcloud storage buckets add-iam-policy-binding gs://$BUCKET \
+#   --role=roles/storage.objectUser \
+#   --member=principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/default/sa/default \
+#   --condition=None
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-gemma-3-1b-ft
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-gemma-3-1b-ft
+  template:
+    metadata:
+      labels:
+        app: vllm-gemma-3-1b-ft
+      annotations:
+        gke-gcsfuse/volumes: "true"
+    spec:
+      serviceAccountName: default
+      containers:
+        - name: inference-server
+          image: vllm/vllm-openai:v0.8.5.post1
+          resources:
+            requests:
+              cpu: "2"
+              memory: "25Gi"
+              ephemeral-storage: 10Gi
+              nvidia.com/gpu: "1"
+            limits:
+              cpu: "2"
+              memory: "25Gi"
+              ephemeral-storage: 10Gi
+              nvidia.com/gpu: "1"
+          args:
+            - --model=$(MODEL)
+            - --tensor-parallel-size=1
+          env:
+            - name: MODEL
+              value: /gcs/$MODEL_PATH
+          volumeMounts:
+            - mountPath: /dev/shm
+              name: dshm
+            - name: gcs-fuse-csi-ephemeral
+              mountPath: /gcs
+              readOnly: true
+          ports:
+            - containerPort: 8000
+              name: http
+              protocol: TCP
+          lifecycle:
+            preStop:
+              sleep:
+                seconds: 30
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            periodSeconds: 1
+            successThreshold: 1
+            failureThreshold: 5
+            timeoutSeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            periodSeconds: 1
+            successThreshold: 1
+            failureThreshold: 1
+            timeoutSeconds: 1
+          startupProbe:
+            failureThreshold: 3600
+            initialDelaySeconds: 2
+            periodSeconds: 1
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+      volumes:
+        - name: dshm
+          emptyDir:
+              medium: Memory
+        - name: gcs-fuse-csi-ephemeral
+          csi:
+            driver: gcsfuse.csi.storage.gke.io
+            volumeAttributes:
+              bucketName: $BUCKET
+              mountOptions: "metadata-cache:ttl-secs:-1,metadata-cache:stat-cache-max-size-mb:-1,metadata-cache:type-cache-max-size-mb:-1,file-cache:max-size-mb:-1,file-cache:cache-file-for-range-read:true,file-cache:enable-parallel-downloads:true,file-system:kernel-list-cache-ttl-secs:-1,gcs-connection:client-protocol:grpc"
+              skipCSIBucketAccessCheck: "true"
+      nodeSelector:
+        cloud.google.com/gke-accelerator: nvidia-l4
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-gemma-3-1b-ft
+spec:
+  selector:
+    app: vllm-gemma-3-1b-ft
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: vllm-gemma-3-1b-ft
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: vllm-gemma-3-1b-ft
+  minReplicas: 1
+  maxReplicas: 2
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 60
+  metrics:
+    - type: External
+      external:
+        metric:
+          name: prometheus.googleapis.com|inference_pool_average_kv_cache_utilization|gauge
+          selector:
+            matchLabels:
+              metric.labels.name: vllm-gemma-3-1b-ft
+        target:
+          type: AverageValue
+          averageValue: 10m
