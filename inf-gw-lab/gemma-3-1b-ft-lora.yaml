@@ -2,16 +2,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: vllm-gemma-3-1b-ft-lora
+  name: vllm-gemma-3-1b
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: vllm-gemma-3-1b-ft-lora
+      app: vllm-gemma-3-1b
   template:
     metadata:
       labels:
-        app: vllm-gemma-3-1b-ft-lora
+        app: vllm-gemma-3-1b
       annotations:
         gke-gcsfuse/volumes: "true"
     spec:
@@ -42,7 +42,7 @@ spec:
             - "--max-lora-rank"
             - "64"
             - "--lora-modules"
-            - '{"name": "math", "path": "/gcs/$LORA_PATH", "base_model_name": "gemma-3"}'
+            - '{"name": "math", "path": "$FT_LORA_ADAPTER_PATH", "base_model_name": "gemma-3"}'
           env:
             - name: MODEL
               value: google/gemma-3-1b-it
@@ -110,10 +110,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: vllm-gemma-3-1b-ft-lora
+  name: vllm-gemma-3-1b
 spec:
   selector:
-    app: vllm-gemma-3-1b-ft-lora
+    app: vllm-gemma-3-1b
   type: ClusterIP
   ports:
     - protocol: TCP
@@ -123,12 +123,12 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: vllm-gemma-3-1b-ft-lora
+  name: vllm-gemma-3-1b
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: vllm-gemma-3-1b-ft-lora
+    name: vllm-gemma-3-1b
   minReplicas: 1
   maxReplicas: 2
   behavior:
@@ -141,7 +141,7 @@ spec:
           name: prometheus.googleapis.com|inference_pool_average_kv_cache_utilization|gauge
           selector:
             matchLabels:
-              metric.labels.name: vllm-gemma-3-1b-ft-lora
+              metric.labels.name: vllm-gemma-3-1b
         target:
           type: AverageValue
           averageValue: 10m
