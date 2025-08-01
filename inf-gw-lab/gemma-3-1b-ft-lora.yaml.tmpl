@@ -31,7 +31,8 @@ spec:
               ephemeral-storage: 10Gi
               nvidia.com/gpu: "1"
           args:
-            - "--model=$(MODEL)"
+            - "--model"
+            - "google/gemma-3-1b-it"
             - "--tensor-parallel-size"
             - "1"
             - "--port"
@@ -44,8 +45,6 @@ spec:
             - "--lora-modules"
             - '{"name": "math-ft", "path": "$FT_LORA_ADAPTER_PATH", "base_model_name": "gemma-3"}'
           env:
-            - name: MODEL
-              value: google/gemma-3-1b-it
             - name: HUGGING_FACE_HUB_TOKEN
               valueFrom:
                 secretKeyRef:
