@@ -4,8 +4,8 @@
 # PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format 'get(projectNumber)')
 # BUCKET=$PROJECT_ID-data
 # # User entry
-# MODEL_PATH=model-source
-# BUCKET_SOURCE=bucket-source
+# MODEL_PATH=
+# BUCKET_SOURCE=
 
 # # Create Bucket
 # gcloud storage buckets create gs://$BUCKET \

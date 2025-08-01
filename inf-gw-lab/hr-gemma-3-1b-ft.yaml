@@ -10,7 +10,7 @@ spec:
         - headers:
             - type: Exact
               name: X-Gateway-Model-Name
-              value: $FT_LORA_ADAPTER_PATH
+              value: math-ft
         - path:
             type: PathPrefix
             value: /

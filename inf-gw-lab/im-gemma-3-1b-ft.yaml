@@ -3,7 +3,7 @@ kind: InferenceModel
 metadata:
   name: gemma-3-1b-ft
 spec:
-  modelName: $FT_LORA_ADAPTER_PATH
+  modelName: math-ft
   criticality: Critical
   poolRef:
     name: vllm-gemma-3-1b
