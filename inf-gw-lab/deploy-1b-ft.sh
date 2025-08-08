@@ -6,7 +6,7 @@ export CLUSTER_NAME=vllm-inference
 export REGION=$(gcloud compute project-info describe \
 --format="value(commonInstanceMetadata.items[google-compute-default-region])")
 export FT_LORA_ADAPTER_PATH=
-export BUCKET=$PROJECT_ID-data
+export BUCKET=$PROJECT_ID
 
 echo "### Get cluster"
 gcloud container clusters get-credentials $CLUSTER_NAME \
@@ -36,7 +36,7 @@ kubectl apply -f hr-gemma-3-1b-ft.yaml
 
 echo "### Deploy body-based routing"
 helm install bbr \
-  --version v0.3.0 \
+  --version v0.5.1 \
   --set provider.name=gke \
   --set inferenceGateway.name=vllm-xlb \
 oci://registry.k8s.io/gateway-api-inference-extension/charts/body-based-routing
@@ -46,8 +46,9 @@ INFERENCE_POOL=vllm-gemma-3-1b
 helm install ${INFERENCE_POOL} \
   --set inferencePool.modelServers.matchLabels.app=vllm-gemma-3-1b \
   --set provider.name=gke \
-  --version v0.3.0 \
-  oci://registry.k8s.io/gateway-api-inference-extension/charts/inferencepool
+  --version v0.5.1 \
+  oci://registry.k8s.io/gateway-api-inference-extension/charts/inferencepool \
+  -f epp-values.yaml
 
 echo "### Deploy Inference Model for gemma 3 1b"
 kubectl apply -f im-gemma-3-1b.yaml
