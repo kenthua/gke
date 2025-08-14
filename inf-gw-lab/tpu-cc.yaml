@@ -1,0 +1,24 @@
+---
+apiVersion: cloud.google.com/v1
+kind: ComputeClass
+metadata:
+  name: tpu-class
+spec:
+  priorities:
+  - tpu:
+      type: tpu-v5-lite-podslice
+      count: 4
+      topology: 2x2
+  - spot: true
+    tpu:
+      type: tpu-v5-lite-podslice
+      count: 4
+      topology: 2x2
+  - flexStart:
+      enabled: true
+    tpu:
+      type: tpu-v6e-slice
+      count: 4
+      topology: 2x2
+  nodePoolAutoCreation:
+    enabled: true

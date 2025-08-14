@@ -1,0 +1,112 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-tpu
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-tpu
+  template:
+    metadata:
+      labels:
+        app: vllm-tpu
+      annotations:
+        gke-gcsfuse/volumes: "true"
+        gke-gcsfuse/cpu-limit: "0"
+        gke-gcsfuse/memory-limit: "0"
+        gke-gcsfuse/ephemeral-storage-limit: "0"
+    spec:
+      nodeSelector:
+        #cloud.google.com/gke-tpu-topology: 2x4
+        #cloud.google.com/gke-tpu-accelerator: tpu-v6e-slice
+        cloud.google.com/compute-class: tpu-class
+      containers:
+      - name: vllm-tpu
+        image: docker.io/vllm/vllm-tpu:4c409cabc2c1c432ba670029990bd59e6bbf1479
+        command: ["python3", "-m", "vllm.entrypoints.openai.api_server"]
+        args:
+        - --host=0.0.0.0
+        - --port=8000
+        - --tensor-parallel-size=4
+        - --max-model-len=4096
+        - --model=$FT_MODEL_PATH
+        - --download-dir=/gcs
+        - --max-num-batched-tokens=512
+        - --max-num-seqs=128
+        env: 
+        - name: VLLM_XLA_CACHE_PATH
+          value: "/gcs"
+        - name: VLLM_USE_V1
+          value: "1"
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            google.com/tpu: 4
+          limits:
+            google.com/tpu: 4
+        lifecycle:
+          preStop:
+            sleep:
+              seconds: 30
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+            scheme: HTTP
+          periodSeconds: 1
+          successThreshold: 1
+          failureThreshold: 5
+          timeoutSeconds: 1
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+            scheme: HTTP
+          periodSeconds: 1
+          successThreshold: 1
+          failureThreshold: 1
+          timeoutSeconds: 1
+        startupProbe:
+          failureThreshold: 3600
+          initialDelaySeconds: 2
+          periodSeconds: 1
+          httpGet:
+            path: /health
+            port: http
+            scheme: HTTP
+        volumeMounts:
+        - name: gcs-fuse-csi-ephemeral
+          mountPath: /gcs
+        - name: dshm
+          mountPath: /dev/shm
+      volumes:
+      - name: gke-gcsfuse-cache
+        emptyDir:
+          medium: Memory
+      - name: dshm
+        emptyDir:
+          medium: Memory
+      - name: gcs-fuse-csi-ephemeral
+        csi:
+          driver: gcsfuse.csi.storage.gke.io
+          volumeAttributes:
+            bucketName: $BUCKET
+            mountOptions: "metadata-cache:ttl-secs:-1,metadata-cache:stat-cache-max-size-mb:-1,metadata-cache:type-cache-max-size-mb:-1,file-cache:max-size-mb:-1,file-cache:cache-file-for-range-read:true,file-cache:enable-parallel-downloads:true,file-system:kernel-list-cache-ttl-secs:-1,gcs-connection:client-protocol:grpc"
+            skipCSIBucketAccessCheck: "true"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-service
+spec:
+  selector:
+    app: vllm-tpu
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8000  
+      targetPort: 8000
