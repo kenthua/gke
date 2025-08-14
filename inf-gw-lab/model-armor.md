@@ -39,7 +39,7 @@ gcloud config set api_endpoint_overrides/modelarmor \
 
     Learn more about the different template options in Google Cloud Documentation [Model Armor Overview](https://cloud.google.com/security-command-center/docs/model-armor-overview)
 
-    You can also [create templates](https://console.cloud.google.com/security/modelarmor/templates) using the the Google Cloud console.
+    You can also [create templates](https://console.cloud.google.com/security/modelarmor/templates) using the Google Cloud console.
 
 ```bash
 gcloud model-armor templates create $MODEL_ARMOR_TEMPLATE_NAME \
