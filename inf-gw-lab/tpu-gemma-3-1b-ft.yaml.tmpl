@@ -29,7 +29,7 @@ spec:
         args:
         - --host=0.0.0.0
         - --port=8000
-        - --tensor-parallel-size=4
+        - --tensor-parallel-size=1
         - --max-model-len=4096
         - --model=$FT_MODEL_PATH
         - --download-dir=/gcs
@@ -46,9 +46,9 @@ spec:
           protocol: TCP
         resources:
           requests:
-            google.com/tpu: 4
+            google.com/tpu: 1
           limits:
-            google.com/tpu: 4
+            google.com/tpu: 1
         lifecycle:
           preStop:
             sleep:
@@ -112,3 +112,29 @@ spec:
       protocol: TCP
       port: 8000  
       targetPort: 8000
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: vllm-tpu
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: vllm-tpu 
+  minReplicas: 1
+  maxReplicas: 2
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 60
+  metrics:
+    - type: External
+      external:
+        metric:
+          name: prometheus.googleapis.com|inference_pool_average_kv_cache_utilization|gauge
+          selector:
+            matchLabels:
+              metric.labels.name: vllm-tpu
+        target:
+          type: AverageValue
+          averageValue: 10m

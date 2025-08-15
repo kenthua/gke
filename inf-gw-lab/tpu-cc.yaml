@@ -7,18 +7,18 @@ spec:
   priorities:
   - tpu:
       type: tpu-v5-lite-podslice
-      count: 4
-      topology: 2x2
+      count: 1
+      topology: 1x1
   - spot: true
     tpu:
       type: tpu-v5-lite-podslice
-      count: 4
-      topology: 2x2
+      count: 1
+      topology: 1x1
   - flexStart:
       enabled: true
     tpu:
       type: tpu-v6e-slice
-      count: 4
-      topology: 2x2
+      count: 1
+      topology: 1x1
   nodePoolAutoCreation:
     enabled: true
