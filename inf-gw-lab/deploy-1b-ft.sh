@@ -49,7 +49,6 @@ else
   kubectl apply -f hr-gemma-3-1b-ft.yaml
 fi
 
-
 echo "### Deploy body-based routing"
 helm install bbr \
   --version v0.5.1 \
@@ -57,15 +56,27 @@ helm install bbr \
   --set inferenceGateway.name=vllm-xlb \
 oci://registry.k8s.io/gateway-api-inference-extension/charts/body-based-routing
 
-echo "### Deploy Inference Pool for gemma 3 1b"
-INFERENCE_POOL=vllm-gemma-3-1b
-helm install ${INFERENCE_POOL} \
-  --set inferencePool.modelServers.matchLabels.app=vllm-gemma-3-1b \
-  --set provider.name=gke \
-  --version v0.5.1 \
-  --set inferenceExtension.replicas=2 \
-  oci://registry.k8s.io/gateway-api-inference-extension/charts/inferencepool \
-  -f epp-values.yaml
+if [ "$DEPLOY_TYPE" = "gpu" ]; then
+  echo "### Deploy Inference Pool for gemma 3 1b"
+  INFERENCE_POOL=vllm-gemma-3-1b
+  helm install ${INFERENCE_POOL} \
+    --set inferencePool.modelServers.matchLabels.app=vllm-gemma-3-1b \
+    --set provider.name=gke \
+    --version v0.5.1 \
+    --set inferenceExtension.replicas=2 \
+    oci://registry.k8s.io/gateway-api-inference-extension/charts/inferencepool \
+    -f epp-values.yaml
+else
+  echo "### Deploy Inference Pool for gemma 3 1b fine-tuned"
+  INFERENCE_POOL=vllm-gemma-3-1b-ft
+  helm install ${INFERENCE_POOL} \
+    --set inferencePool.modelServers.matchLabels.app=vllm-gemma-3-1b-ft \
+    --set provider.name=gke \
+    --version v0.5.1 \
+    --set inferenceExtension.replicas=2 \
+    oci://registry.k8s.io/gateway-api-inference-extension/charts/inferencepool \
+    -f epp-values.yaml
+fi
 
 echo "### Deploy Inference Model for gemma 3 1b"
 kubectl apply -f im-gemma-3-1b.yaml
