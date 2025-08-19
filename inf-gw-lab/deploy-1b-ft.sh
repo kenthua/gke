@@ -1,5 +1,11 @@
 #!/bin/bash
 
+DEPLOY_TYPE=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+
+if [ "$DEPLOY_TYPE" != "tpu" ] && [ "$DEPLOY_TYPE" != "gpu" ]; then
+  DEPLOY_TYPE="gpu"
+fi
+
 echo "### Set env"
 export PROJECT_ID=$(gcloud config get-value project)
 export CLUSTER_NAME=vllm-inference
@@ -18,9 +24,13 @@ kubectl create secret generic hf-secret \
       --from-literal=hf_api_token=$HF_TOKEN \
       --dry-run=client -o yaml | kubectl apply -f -
 
-echo "### Deploy gemma 3 1b"
-envsubst < gemma-3-1b-ft-lora.yaml.tmpl > gemma-3-1b-ft-lora.yaml
-kubectl apply -f gemma-3-1b-ft-lora.yaml
+echo "### Deploy gemma 3 1b fine-tuned"
+if [ "$DEPLOY_TYPE" = "gpu" ]; then
+  envsubst < gemma-3-1b-ft-lora.yaml.tmpl > gemma-3-1b-ft-lora.yaml
+  kubectl apply -f gemma-3-1b-ft-lora.yaml
+elif then;
+  kubectl apply -f tpu-gemma-3-1b-ft.yaml
+fi
 
 echo "### Deploy Gradio"
 kubectl apply -f gradio.yaml

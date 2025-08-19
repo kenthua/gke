@@ -1,7 +1,17 @@
 #!/bin/bash
 
+DEPLOY_TYPE=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+
+if [ "$DEPLOY_TYPE" != "tpu" ] && [ "$DEPLOY_TYPE" != "gpu" ]; then
+  DEPLOY_TYPE="gpu"
+fi
+
 echo "### Deploy gemma 3 4b"
-kubectl apply -f gemma-3-4b.yaml
+if [ "$DEPLOY_TYPE" = "gpu" ]; then
+  kubectl apply -f gemma-3-4b.yaml
+elif then;
+  kubectl apply -f tpu-gemma-3-4b.yaml
+fi
 
 echo "### Deploy Inference Pool for gemma 3 1b"
 INFERENCE_POOL=vllm-gemma-3-4b
