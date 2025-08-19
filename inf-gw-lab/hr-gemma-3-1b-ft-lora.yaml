@@ -10,11 +10,11 @@ spec:
         - headers:
             - type: Exact
               name: X-Gateway-Model-Name
-              value: med-ft
+              value: math-ft
         - path:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: vllm-gemma-3-1b-ft
+        - name: vllm-gemma-3-1b
           group: inference.networking.x-k8s.io
           kind: InferencePool

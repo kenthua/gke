@@ -43,7 +43,12 @@ echo "### Deploy HTTPRoute for gemma 3 1b"
 kubectl apply -f hr-gemma-3-1b.yaml
 
 echo "### Deploy HTTPRoute for gemma 3 1b ft"
-kubectl apply -f hr-gemma-3-1b-ft.yaml
+if [ "$DEPLOY_TYPE" = "gpu" ]; then
+  kubectl apply -f hr-gemma-3-1b-ft-lora.yaml
+elif then;
+  kubectl apply -f hr-gemma-3-1b-ft.yaml
+fi
+
 
 echo "### Deploy body-based routing"
 helm install bbr \
@@ -65,5 +70,9 @@ helm install ${INFERENCE_POOL} \
 echo "### Deploy Inference Model for gemma 3 1b"
 kubectl apply -f im-gemma-3-1b.yaml
 
-echo "### Deploy Inference Model for gemma 3 1b"
-kubectl apply -f im-gemma-3-1b-ft.yaml
+echo "### Deploy Inference Model for gemma 3 1b fine-tuned"
+if [ "$DEPLOY_TYPE" = "gpu" ]; then
+  kubectl apply -f im-gemma-3-1b-ft-lora.yaml
+elif then;
+  kubectl apply -f im-gemma-3-1b-ft.yaml
+fi
