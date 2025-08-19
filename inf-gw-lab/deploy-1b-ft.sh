@@ -10,8 +10,9 @@ echo "### Set env"
 export PROJECT_ID=$(gcloud config get-value project)
 export CLUSTER_NAME=vllm-inference
 export REGION=$(gcloud compute project-info describe \
---format="value(commonInstanceMetadata.items[google-compute-default-region])")
+  --format="value(commonInstanceMetadata.items[google-compute-default-region])")
 export FT_LORA_ADAPTER_PATH=
+export FT_MODEL_PATH=
 export BUCKET=$PROJECT_ID
 
 echo "### Get cluster"
