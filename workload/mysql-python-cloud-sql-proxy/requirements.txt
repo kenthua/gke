@@ -1,4 +1,2 @@
-Flask==1.0.2
-#MySQL-python
-mysqlclient
-#mysql-connector
+Flask==3.1.1
+mysqlclient==2.2.7
