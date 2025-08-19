@@ -25,7 +25,7 @@ kubectl create secret generic hf-secret \
 echo "### Deploy gemma 3 1b"
 if [ "$DEPLOY_TYPE" = "gpu" ]; then
   kubectl apply -f gemma-3-1b.yaml
-elif then;
+else
   kubectl apply -f tpu-gemma-3-1b.yaml
 fi
 

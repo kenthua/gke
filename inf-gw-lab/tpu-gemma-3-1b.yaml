@@ -2,21 +2,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: vllm-gemma-3-1b-ft
+  name: vllm-gemma-3-1b
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: vllm-gemma-3-1b-ft
+      app: vllm-gemma-3-1b
   template:
     metadata:
       labels:
-        app: vllm-gemma-3-1b-ft
-      annotations:
-        gke-gcsfuse/volumes: "true"
-        gke-gcsfuse/cpu-limit: "0"
-        gke-gcsfuse/memory-limit: "0"
-        gke-gcsfuse/ephemeral-storage-limit: "0"
+        app: vllm-gemma-3-1b
     spec:
       nodeSelector:
         #cloud.google.com/gke-tpu-topology: 2x4
@@ -31,7 +26,7 @@ spec:
         - --port=8000
         - --tensor-parallel-size=1
         - --max-model-len=4096
-        - --model=$FT_MODEL_PATH
+        - --model=google/gemma-3-1b-it
         - --download-dir=/gcs
         - --max-num-batched-tokens=512
         - --max-num-seqs=128
@@ -80,32 +75,20 @@ spec:
             port: http
             scheme: HTTP
         volumeMounts:
-        - name: gcs-fuse-csi-ephemeral
-          mountPath: /gcs
         - name: dshm
           mountPath: /dev/shm
       volumes:
-      - name: gke-gcsfuse-cache
-        emptyDir:
-          medium: Memory
       - name: dshm
         emptyDir:
           medium: Memory
-      - name: gcs-fuse-csi-ephemeral
-        csi:
-          driver: gcsfuse.csi.storage.gke.io
-          volumeAttributes:
-            bucketName: $BUCKET
-            mountOptions: "metadata-cache:ttl-secs:-1,metadata-cache:stat-cache-max-size-mb:-1,metadata-cache:type-cache-max-size-mb:-1,file-cache:max-size-mb:-1,file-cache:cache-file-for-range-read:true,file-cache:enable-parallel-downloads:true,file-system:kernel-list-cache-ttl-secs:-1,gcs-connection:client-protocol:grpc"
-            skipCSIBucketAccessCheck: "true"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: vllm-gemma-3-1b-ft
+  name: vllm-gemma-3-1b
 spec:
   selector:
-    app: vllm-gemma-3-1b-ft
+    app: vllm-gemma-3-1b
   type: ClusterIP
   ports:
     - name: http
@@ -116,12 +99,12 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: vllm-gemma-3-1b-ft
+  name: vllm-gemma-3-1b
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: vllm-gemma-3-1b-ft
+    name: vllm-gemma-3-1b
   minReplicas: 1
   maxReplicas: 2
   behavior:
@@ -134,7 +117,7 @@ spec:
           name: prometheus.googleapis.com|inference_pool_average_kv_cache_utilization|gauge
           selector:
             matchLabels:
-              metric.labels.name: vllm-gemma-3-1b-ft
+              metric.labels.name: vllm-gemma-3-1b
         target:
           type: AverageValue
           averageValue: 10m

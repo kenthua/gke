@@ -9,7 +9,7 @@ fi
 echo "### Deploy gemma 3 4b"
 if [ "$DEPLOY_TYPE" = "gpu" ]; then
   kubectl apply -f gemma-3-4b.yaml
-elif then;
+else
   kubectl apply -f tpu-gemma-3-4b.yaml
 fi
 

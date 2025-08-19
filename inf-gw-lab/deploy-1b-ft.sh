@@ -28,7 +28,8 @@ echo "### Deploy gemma 3 1b fine-tuned"
 if [ "$DEPLOY_TYPE" = "gpu" ]; then
   envsubst < gemma-3-1b-ft-lora.yaml.tmpl > gemma-3-1b-ft-lora.yaml
   kubectl apply -f gemma-3-1b-ft-lora.yaml
-elif then;
+else
+  envsubst < tpu-gemma-3-1b-ft.yaml.tmpl > tpu-gemma-3-1b-ft.yaml
   kubectl apply -f tpu-gemma-3-1b-ft.yaml
 fi
 
