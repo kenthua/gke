@@ -35,6 +35,11 @@ spec:
           value: "/gcs"
         - name: VLLM_USE_V1
           value: "1"
+        - name: HUGGING_FACE_HUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: hf-secret
+              key: hf_api_token
         ports:
         - containerPort: 8000
           name: http
