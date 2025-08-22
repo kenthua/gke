@@ -31,17 +31,12 @@ spec:
               ephemeral-storage: 10Gi
               nvidia.com/gpu: "1"
           args:
-            - "--model"
-            - "google/gemma-3-1b-it"
-            - "--tensor-parallel-size"
-            - "1"
-            - "--port"
-            - "8000"
+            - "--model=google/gemma-3-1b-it"
+            - "--tensor-parallel-size=1"
+            - "--port=8000"
             - "--enable-lora"
-            - "--max-loras"
-            - "1"
-            - "--max-lora-rank"
-            - "64"
+            - "--max-loras=1"
+            - "--max-lora-rank=64"
             - "--lora-modules"
             - '{"name": "math-ft", "path": "$FT_LORA_ADAPTER_PATH", "base_model_name": "gemma-3"}'
           env:
