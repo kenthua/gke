@@ -7,18 +7,12 @@ Intended to run in the order described:
 
 - `setup.sh` - sets up the cluster and inference gateway prereqs
 
-Choose 1 for 1b:
-
+For the 1b scripts, it takes a `gpu | tpu` parameter. No parameter defaults to `gpu`
 - `deploy-1b.sh` - deploys gemma 3 1b it resources
-
-or
-
-- `deploy-1b-ft.sh` - deploys gemma 3 1b resources and a lora adapter. You will need to add the lora adapter path to the script.
-
-Continue from here:
-
+- `deploy-1b-ft.sh` - deploys gemma 3 1b fine-tuned model resources. You will need to add the gcs fine-tuned model path to the script.
+- `deploy-1b-ft-lora.sh` - deploys gemma 3 1b and lora adapter model resources. You will need to add the gcs lora adapter path to the script.
 - `deploy-4b.sh` - deploys gemma 3 4b it resources
-- `deploy-ma.sh`- configures model armor for the gemama 3 1b it model, which assesses the prompt and responses for Responsible AI and safety filters.
+- `deploy-ma.sh`- configures model armor for the gemma 3 1b it model, which assesses the prompt and responses for Responsible AI and safety filters.
 - `deploy-ca.sh`- configures cloud armor for the gemma models, which requires a HTTP `user-id` header to access resources as a test.
 
 ## Test Queries and sample outputs
