@@ -20,7 +20,8 @@ helm install ${INFERENCE_POOL} \
   --set provider.name=gke \
   --version v0.5.1 \
   --set inferenceExtension.replicas=2 \
-  oci://registry.k8s.io/gateway-api-inference-extension/charts/inferencepool
+  oci://registry.k8s.io/gateway-api-inference-extension/charts/inferencepool \
+  -f epp-values.yaml
 
 echo "### Deploy Inference Model for gemma 3 4b"
 kubectl apply -f im-gemma-3-4b.yaml

@@ -2,7 +2,7 @@
 # REGION=$(gcloud compute project-info describe \
 #  --format="value(commonInstanceMetadata.items[google-compute-default-region])")
 # PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format 'get(projectNumber)')
-# BUCKET=$PROJECT_ID-data
+# BUCKET=$PROJECT_ID
 # # User entry
 # MODEL_PATH=
 # BUCKET_SOURCE=
