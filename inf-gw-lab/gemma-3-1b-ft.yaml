@@ -60,11 +60,8 @@ spec:
               ephemeral-storage: 10Gi
               nvidia.com/gpu: "1"
           args:
-            - --model=$(MODEL)
+            - --model=$FT_MODEL_PATH
             - --tensor-parallel-size=1
-          env:
-            - name: MODEL
-              value: /gcs/$MODEL_PATH
           volumeMounts:
             - mountPath: /dev/shm
               name: dshm
