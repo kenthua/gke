@@ -1,0 +1,65 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: benchmark
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app: benchmark  
+    spec:
+      containers:
+      - name: job
+        image: vllm/vllm-openai:v0.10.1.1
+        imagePullPolicy: Always
+        command: ["/bin/sh"]
+        args:
+        - -c
+        - |
+          pip install --root-user-action ignore pandas==2.3.2 datasets==4.0.0
+          python3 benchmarks/benchmark_serving.py \
+            --backend vllm \
+            --model google/gemma-3-1b-it \
+            --host $GW_IP \
+            --port $GW_PORT \
+            --endpoint /v1/completions \
+            --dataset-name custom \
+            --dataset-path /tmp/data.jsonl \
+            --temperature 0.7 \
+            --top-p 0.95 \
+            --max-concurrency 300 \
+            --num-prompts 7500
+        env:            
+          - name: HUGGING_FACE_HUB_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: hf-secret
+                key: hf_api_token
+        resources:
+          requests:
+            cpu: "2"
+            memory: "5Gi"
+          limits:
+            cpu: "2"
+            memory: "5Gi"
+        volumeMounts:
+          - name: data-volume
+            mountPath: /tmp
+      restartPolicy: Never
+      volumes:
+        - name: data-volume
+          configMap:
+            name: benchmark-data
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: benchmark-data
+data:
+  data.jsonl: |
+    {"prompt": "Peter has 25 apples to sell. He sells the first 10 for $1 each, 10 more for $0.75 each and the last 5 for $0.50 each. How much money does he make?"}
+    {"prompt": "What are the top 5 most popular programming languages? Please be brief."}
+    {"prompt": "Roses are red."}
+    {"prompt": "What is a good place for travel in the US?"}
+    {"prompt": "You are a helpful 2nd-grade teacher. Help a 2nd grader to answer questions in a short and clear manner. Explain why the sky is blue"}
