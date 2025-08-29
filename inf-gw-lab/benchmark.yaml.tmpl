@@ -28,8 +28,9 @@ spec:
             --dataset-path /tmp/data.jsonl \
             --temperature 0.7 \
             --top-p 0.95 \
-            --max-concurrency 300 \
-            --num-prompts 7500
+            --custom-output-len 1024 \
+            --max-concurrency 450 \
+            --num-prompts 15000
         env:            
           - name: HUGGING_FACE_HUB_TOKEN
             valueFrom:
@@ -60,6 +61,10 @@ data:
   data.jsonl: |
     {"prompt": "Peter has 25 apples to sell. He sells the first 10 for $1 each, 10 more for $0.75 each and the last 5 for $0.50 each. How much money does he make?"}
     {"prompt": "What are the top 5 most popular programming languages? Please be brief."}
-    {"prompt": "Roses are red."}
+    {"prompt": "I baked 15 cupcakes for a bake sale. I wanted to share some with my friends so I gave 5 to my friends. Needing a few more for taste testing, I baked 4 more cupcakes. Later, I couldn't resist and a I ate 1 cupcake by myself. How many cupcakes do I have right now? Explain your thinking step by step including the number of cupcakes per step."}
     {"prompt": "What is a good place for travel in the US?"}
     {"prompt": "You are a helpful 2nd-grade teacher. Help a 2nd grader to answer questions in a short and clear manner. Explain why the sky is blue"}
+    {"prompt": "The rapid advancement of Large Language Models (LLMs) has revolutionized various fields,yet their deployment presents unique evaluation challenges. This whitepaper details the principles, approaches, and applications of evaluating LLMs, focusing on how to move from a Minimum Viable Product (MVP) to production-ready systems. It addresses the need for task-specific evaluations, the complexities of evaluating LLM-powered architectures, and the importance of defining good outputs in the context of generative models. The whitepaper provides concrete methodologies for automated evaluation, including a practical notebook demonstrating the use of LLMs as autoraters. Finally, we highlight the critical role of meta evaluation in ensuring the reliability and validity of LLM evaluation systems. Explain more of this to me."}
+    {"prompt": "We explored different approaches to evaluating LLMs, emphasizing the need to align evaluation strategies with specific requirements and address potential biases. We examine three primary evaluation methods: computational metrics, human assessment, and automated evaluation using autoraters. The optimal choice depends on the specific task, balancing cost considerations with the desired level of quality. Importantly, these methods are not mutually exclusive; they can be used together to provide a more comprehensive and robust evaluation. Customization is key to effective LLM evaluation. This includes carefully designing prompts to elicit desired responses, fine-tuning LLMs to better align with human judgments, and calibrating autoraters through meta-evaluation to ensure they accurately reflect your evaluation criteria. Throughout the process, it’s vital to remain focused on your specific business needs, ensuring the evaluation aligns with your domain, criteria, and objectives. Finally, it’s crucial to be mindful of potential biases in evaluation methods. By understanding and addressing these biases proactively, you can develop more reliable evaluation strategies that accurately assess LLM performance. A forthcoming notebook will delve deeper into these concepts, providing practical guidance and examples for implementing robust LLM evaluation techniques.model to tell a story or write a song. Examples of prompt engineering include providing clear instructions to the LLM, giving examples, using keywords, and formatting to emphasize important information, providing additional background details etc. Please help dig into these details."}
+
+#https://services.google.com/fh/files/blogs/neurips_evaluation.pdf
