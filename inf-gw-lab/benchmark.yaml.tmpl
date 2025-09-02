@@ -6,6 +6,8 @@ spec:
   backoffLimit: 0
   template:
     metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
       labels:
         app: benchmark  
     spec:
