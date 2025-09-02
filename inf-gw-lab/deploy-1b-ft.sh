@@ -19,6 +19,11 @@ gcloud container clusters get-credentials $CLUSTER_NAME \
 --region $REGION \
 --project $PROJECT_ID
 
+echo "### Deploy TPU Compute Class for v5e->v6e"
+if [ "$DEPLOY_TYPE" = "tpu" ]; then
+  kubectl apply -f tpu-cc.yaml
+fi
+
 echo "### Deploy gemma 3 1b fine-tuned"
 if [ "$DEPLOY_TYPE" = "gpu" ]; then
   envsubst < gemma-3-1b-ft.yaml.tmpl > gemma-3-1b-ft.yaml
