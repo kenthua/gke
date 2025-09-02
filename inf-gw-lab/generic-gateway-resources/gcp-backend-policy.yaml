@@ -1,0 +1,13 @@
+apiVersion: networking.gke.io/v1
+kind: GCPBackendPolicy
+metadata:
+  name: service-backend-policy
+spec:
+  targetRef:
+    group: ""
+    kind: Service
+    name: vllm-gemma-3-1b
+  default:
+    timeoutSec: 300
+    logging:
+      enabled: true
