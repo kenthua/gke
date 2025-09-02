@@ -19,8 +19,8 @@ gcloud container clusters get-credentials $CLUSTER_NAME \
 --region $REGION \
 --project $PROJECT_ID
 
-echo "### Deploy TPU Compute Class for v5e->v6e"
 if [ "$DEPLOY_TYPE" = "tpu" ]; then
+  echo "### Deploy TPU Compute Class for v5e->v6e"
   kubectl apply -f tpu-cc.yaml
 fi
 
