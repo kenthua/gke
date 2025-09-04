@@ -4,7 +4,7 @@
 # PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format 'get(projectNumber)')
 # BUCKET=$PROJECT_ID
 # # User entry
-# MODEL_PATH=
+# FT_MODEL_PATH=
 # BUCKET_SOURCE=
 
 # # Create Bucket
@@ -18,8 +18,8 @@
 
 # # Copy data from shared bucket
 # gcloud storage cp -R \
-#   gs://$BUCKET_SOURCE/$MODEL_PATH \
-#   gs://$BUCKET/$MODEL_PATH
+#   gs://$BUCKET_SOURCE/$FT_MODEL_PATH \
+#   gs://$BUCKET/$FT_MODEL_PATH
 
 # # Set permissions for GKE to access the bucket
 # gcloud storage buckets add-iam-policy-binding gs://$BUCKET \
