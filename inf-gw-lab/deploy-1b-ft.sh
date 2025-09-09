@@ -42,11 +42,10 @@ INFERENCE_POOL=vllm-gemma-3-1b-ft
 helm install ${INFERENCE_POOL} \
   --set inferencePool.modelServers.matchLabels.app=vllm-gemma-3-1b-ft \
   --set provider.name=gke \
-  --version v0.5.1 \
-  --set inferenceExtension.replicas=2 \
+  --version v1.0.0 \
   oci://registry.k8s.io/gateway-api-inference-extension/charts/inferencepool \
   -f epp-values.yaml
 
-echo "### Deploy Inference Model for gemma 3 1b fine-tuned"
-envsubst < im-gemma-3-1b-ft.yaml.tmpl > im-gemma-3-1b-ft.yaml
-kubectl apply -f im-gemma-3-1b-ft.yaml
+echo "### Deploy Inference Objective for gemma 3 1b fine-tuned"
+envsubst < io-gemma-3-1b-ft.yaml.tmpl > io-gemma-3-1b-ft.yaml
+kubectl apply -f io-gemma-3-1b-ft.yaml
