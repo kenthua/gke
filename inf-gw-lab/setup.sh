@@ -27,7 +27,7 @@ gcloud container clusters create-auto $CLUSTER_NAME \
     --release-channel=rapid \
     --auto-monitoring-scope=ALL
 
-kubectl apply -f https://github.com/kubernetes-sigs/gateway-api-inference-extension/releases/download/v0.5.1/manifests.yaml
+kubectl apply -f https://github.com/kubernetes-sigs/gateway-api-inference-extension/releases/download/v1.0.0/manifests.yaml
 
 kubectl apply -f inference-gateway-metrics-rbac.yaml
 
