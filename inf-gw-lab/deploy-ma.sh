@@ -20,7 +20,9 @@ gcloud config set api_endpoint_overrides/modelarmor \
 "https://modelarmor.$LOCATION.rep.googleapis.com/"
 
 echo "### Create model armor template"
-gcloud model-armor templates create $MODEL_ARMOR_TEMPLATE_NAME --location $LOCATION \
+gcloud model-armor templates create $MODEL_ARMOR_TEMPLATE_NAME \
+  --location $LOCATION \
+  --basic-config-filter-enforcement=enabled \
   --pi-and-jailbreak-filter-settings-enforcement=enabled \
   --pi-and-jailbreak-filter-settings-confidence-level=MEDIUM_AND_ABOVE \
   --rai-settings-filters='[{ "filterType": "HATE_SPEECH", "confidenceLevel": "MEDIUM_AND_ABOVE" },{ "filterType": "DANGEROUS", "confidenceLevel": "MEDIUM_AND_ABOVE" },{ "filterType": "HARASSMENT", "confidenceLevel": "MEDIUM_AND_ABOVE" },{ "filterType": "SEXUALLY_EXPLICIT", "confidenceLevel": "MEDIUM_AND_ABOVE" }]' \
