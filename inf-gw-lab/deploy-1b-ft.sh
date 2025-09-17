@@ -11,7 +11,7 @@ export PROJECT_ID=$(gcloud config get-value project)
 export CLUSTER_NAME=vllm-inference
 export REGION=$(gcloud compute project-info describe \
   --format="value(commonInstanceMetadata.items[google-compute-default-region])")
-export FT_MODEL_PATH=
+export FT_MODEL_PATH=$1
 export BUCKET=$PROJECT_ID
 
 echo "### Get cluster"
