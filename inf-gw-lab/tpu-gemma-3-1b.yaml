@@ -19,7 +19,7 @@ spec:
         cloud.google.com/compute-class: tpu-class
       containers:
       - name: inference-server
-        image: docker.io/vllm/vllm-tpu:4c409cabc2c1c432ba670029990bd59e6bbf1479
+        image: docker.io/vllm/vllm-tpu:v0.11.1
         command: ["python3", "-m", "vllm.entrypoints.openai.api_server"]
         args:
         - --host=0.0.0.0

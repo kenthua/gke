@@ -1,9 +1,27 @@
 #!/bin/bash
 
-DEPLOY_TYPE=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+# Default values
+DEPLOY_TYPE="gpu"
+FT_MODEL_PATH=""
+INPUT_ARG_1="$1"
+INPUT_ARG_2="$2"
 
-if [ "$DEPLOY_TYPE" != "tpu" ] && [ "$DEPLOY_TYPE" != "gpu" ]; then
-  DEPLOY_TYPE="gpu"
+# --- Argument Parsing ---
+
+# Check if $1 is 'tpu' or 'gpu' (case-insensitive)
+if [ -n "$INPUT_ARG_1" ]; then
+  LOWER_ARG_1=$(echo "$INPUT_ARG_1" | tr '[:upper:]' '[:lower:]')
+  if [ "$LOWER_ARG_1" = "tpu" ] || [ "$LOWER_ARG_1" = "gpu" ]; then
+    DEPLOY_TYPE="$LOWER_ARG_1"
+    # If $1 is DEPLOY_TYPE, then $2 might be FT_MODEL_PATH
+    if [ -n "$INPUT_ARG_2" ] && [[ "$INPUT_ARG_2" == "/gcs"* ]]; then
+      FT_MODEL_PATH="$INPUT_ARG_2"
+    fi
+  elif [[ "$INPUT_ARG_1" == "/gcs"* ]]; then
+    # If $1 is not DEPLOY_TYPE but starts with "/gcs", it's FT_MODEL_PATH
+    FT_MODEL_PATH="$INPUT_ARG_1"
+    # DEPLOY_TYPE remains the default "gpu"
+  fi
 fi
 
 echo "### Set env"
