@@ -3,25 +3,25 @@
 # Default values
 DEPLOY_TYPE="gpu"
 FT_MODEL_PATH=""
-INPUT_ARG_1="$1"
-INPUT_ARG_2="$2"
 
-# --- Argument Parsing ---
+# 1. Check if the first argument is a deployment type
+LOWER_ARG_1=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+if [ "$LOWER_ARG_1" = "tpu" ] || [ "$LOWER_ARG_1" = "gpu" ]; then
+  DEPLOY_TYPE="$LOWER_ARG_1"
+  # If $1 is DEPLOY_TYPE, $2 MUST be FT_MODEL_PATH
+  FT_MODEL_PATH="$2"
+# 2. Otherwise, the first argument is assumed to be FT_MODEL_PATH
+elif [ -n "$1" ]; then
+  FT_MODEL_PATH="$1"
+  # DEPLOY_TYPE remains the default "gpu"
+fi
 
-# Check if $1 is 'tpu' or 'gpu' (case-insensitive)
-if [ -n "$INPUT_ARG_1" ]; then
-  LOWER_ARG_1=$(echo "$INPUT_ARG_1" | tr '[:upper:]' '[:lower:]')
-  if [ "$LOWER_ARG_1" = "tpu" ] || [ "$LOWER_ARG_1" = "gpu" ]; then
-    DEPLOY_TYPE="$LOWER_ARG_1"
-    # If $1 is DEPLOY_TYPE, then $2 might be FT_MODEL_PATH
-    if [ -n "$INPUT_ARG_2" ] && [[ "$INPUT_ARG_2" == "/gcs"* ]]; then
-      FT_MODEL_PATH="$INPUT_ARG_2"
-    fi
-  elif [[ "$INPUT_ARG_1" == "/gcs"* ]]; then
-    # If $1 is not DEPLOY_TYPE but starts with "/gcs", it's FT_MODEL_PATH
-    FT_MODEL_PATH="$INPUT_ARG_1"
-    # DEPLOY_TYPE remains the default "gpu"
-  fi
+# --- Mandatory Path Check ---
+if [ -z "$FT_MODEL_PATH" ]; then
+  echo "❌ Error: FT_MODEL_PATH must be provided."
+  echo "Usage: $0 <FT_MODEL_PATH>"
+  echo "Usage: $0 <tpu|gpu> <FT_MODEL_PATH>"
+  exit 1
 fi
 
 echo "### Set env"
