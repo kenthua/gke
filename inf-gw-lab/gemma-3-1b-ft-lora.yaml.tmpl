@@ -100,6 +100,8 @@ spec:
         cloud.google.com/gke-accelerator: nvidia-l4
         # need this, otherwise get a CUDA OOM on older driver
         cloud.google.com/gke-gpu-driver-version: "latest"
+  strategy:
+    type: Recreate
 ---
 apiVersion: v1
 kind: Service

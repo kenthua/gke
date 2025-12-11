@@ -80,6 +80,8 @@ spec:
             medium: Memory
       nodeSelector:
         cloud.google.com/gke-accelerator: nvidia-l4
+  strategy:
+    type: Recreate
 ---
 apiVersion: v1
 kind: Service
