@@ -1,0 +1,136 @@
+# export KSA_NAME=default
+# export NAMESPACE=default
+
+# export BUCKET_NAME=
+# export PROJECT_ID=
+# export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID \
+#    --format 'get(projectNumber)')
+
+# gcloud storage buckets add-iam-policy-binding gs://$BUCKET_NAME \
+#    --member="principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/$NAMESPACE/sa/$KSA_NAME" \
+#    --role="roles/storage.bucketViewer"
+
+# gcloud storage buckets add-iam-policy-binding gs://$BUCKET_NAME \
+#     --member="principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/$NAMESPACE/sa/$KSA_NAME" \
+#    --role="roles/storage.objectUser"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-gemma-3-1b-ft
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-gemma-3-1b-ft
+  template:
+    metadata:
+      labels:
+        app: vllm-gemma-3-1b-ft
+    spec:
+      serviceAccountName: default
+      runtimeClassName: gvisor
+      containers:
+        - name: inference-server
+          image: vllm/vllm-openai:v0.12.0
+          resources:
+            requests:
+              cpu: "2"
+              memory: "25Gi"
+              ephemeral-storage: 10Gi
+              nvidia.com/gpu: "1"
+            limits:
+              cpu: "2"
+              memory: "25Gi"
+              ephemeral-storage: 10Gi
+              nvidia.com/gpu: "1"
+          args:
+            - --model=gs://$BUCKET/$MODEL_PATH
+            - --tensor-parallel-size=1
+            - --served-model-name=gemma-3-1b-ft
+            - --load-format=runai_streamer
+            - --model-loader-extra-config={"distributed":true}
+          volumeMounts:
+            - mountPath: /dev/shm
+              name: dshm
+          ports:
+            - containerPort: 8000
+              name: http
+              protocol: TCP
+          lifecycle:
+            preStop:
+              sleep:
+                seconds: 30
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            periodSeconds: 1
+            successThreshold: 1
+            failureThreshold: 5
+            timeoutSeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            periodSeconds: 1
+            successThreshold: 1
+            failureThreshold: 1
+            timeoutSeconds: 1
+          startupProbe:
+            failureThreshold: 3600
+            initialDelaySeconds: 2
+            periodSeconds: 1
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+      volumes:
+        - name: dshm
+          emptyDir:
+              medium: Memory
+      nodeSelector:
+        cloud.google.com/gke-accelerator: nvidia-l4
+  strategy:
+    type: Recreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-gemma-3-1b-ft
+spec:
+  selector:
+    app: vllm-gemma-3-1b-ft
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: vllm-gemma-3-1b-ft
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: vllm-gemma-3-1b-ft
+  minReplicas: 1
+  maxReplicas: 2
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 60
+  metrics:
+    - type: External
+      external:
+        metric:
+          name: prometheus.googleapis.com|inference_pool_average_kv_cache_utilization|gauge
+          selector:
+            matchLabels:
+              metric.labels.name: vllm-gemma-3-1b-ft
+        target:
+          type: AverageValue
+          averageValue: 10m
