@@ -1,6 +1,12 @@
+provider:
+  gke:
+    autopilot: true
 inferenceExtension:
   replicas: 3
   enableLeaderElection: true
+  monitoring:
+    gke:
+      enabled: true
   pluginsConfigFile: "plugins-v2-custom.yaml"
   pluginsCustomConfig:
     plugins-v2-custom.yaml: |

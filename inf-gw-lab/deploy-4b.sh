@@ -18,7 +18,7 @@ INFERENCE_POOL=vllm-gemma-3-4b
 helm install ${INFERENCE_POOL} \
   --set inferencePool.modelServers.matchLabels.app=vllm-gemma-3-4b \
   --set provider.name=gke \
-  --version v1.0.0 \
+  --version v1.0.1 \
   oci://registry.k8s.io/gateway-api-inference-extension/charts/inferencepool \
   -f epp-values.yaml
 
