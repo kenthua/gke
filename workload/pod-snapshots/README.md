@@ -36,15 +36,15 @@ gcloud container node-pools create g2-standard-8-sbx \
   --min-nodes 0 \
   --max-nodes 10
 
-gcloud container node-pools update g2-standard-8-sbx \
-    --cluster=$CLUSTER_NAME \
-    --location=$LOCATION \
-    --node-labels="cloud.google.com/compute-class=l4-gpu-cc"
+#gcloud container node-pools update g2-standard-8-sbx \
+#    --cluster=$CLUSTER_NAME \
+#    --location=$LOCATION \
+#    --node-labels="cloud.google.com/compute-class=l4-gpu-cc"
 
-gcloud container node-pools update g2-standard-8-sbx \
-    --cluster=$CLUSTER_NAME \
-    --location=$LOCATION \
-    --node-taints="cloud.google.com/compute-class=l4-gpu-cc:NoSchedule"
+#gcloud container node-pools update g2-standard-8-sbx \
+#    --cluster=$CLUSTER_NAME \
+#    --location=$LOCATION \
+#    --node-taints="cloud.google.com/compute-class=l4-gpu-cc:NoSchedule"
 ```
 
 ```
