@@ -1,0 +1,10 @@
+apiVersion: podsnapshot.gke.io/v1alpha1
+kind: PodSnapshotStorageConfig
+metadata:
+  name: snap-1
+  namespace: $NAMESPACE
+spec:
+  snapshotStorageConfig:
+    gcs:
+      bucket: "$SNAPSHOT_BUCKET_NAME"
+      path: "snapshot-1"

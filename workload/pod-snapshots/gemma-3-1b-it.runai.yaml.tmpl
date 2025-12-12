@@ -1,0 +1,117 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-gemma-3-1b-it
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-gemma-3-1b-it
+  template:
+    metadata:
+      labels:
+        app: vllm-gemma-3-1b-it
+    spec:
+      serviceAccountName: default
+      runtimeClassName: gvisor
+      containers:
+        - name: inference-server
+          image: vllm/vllm-openai:v0.12.0
+          resources:
+            requests:
+              cpu: "2"
+              memory: "25Gi"
+              ephemeral-storage: 10Gi
+              nvidia.com/gpu: "1"
+            limits:
+              cpu: "2"
+              memory: "25Gi"
+              ephemeral-storage: 10Gi
+              nvidia.com/gpu: "1"
+          args:
+            - --model=gs://$MODEL_BUCKET/$MODEL_ID
+            - --tensor-parallel-size=1
+            - --served-model-name=$MODEL_ID
+            - --load-format=runai_streamer
+            - --model-loader-extra-config={"distributed":true}
+          volumeMounts:
+            - mountPath: /dev/shm
+              name: dshm
+          ports:
+            - containerPort: 8000
+              name: http
+              protocol: TCP
+          lifecycle:
+            preStop:
+              sleep:
+                seconds: 30
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            periodSeconds: 1
+            successThreshold: 1
+            failureThreshold: 5
+            timeoutSeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            periodSeconds: 1
+            successThreshold: 1
+            failureThreshold: 1
+            timeoutSeconds: 1
+          startupProbe:
+            failureThreshold: 3600
+            initialDelaySeconds: 2
+            periodSeconds: 1
+            exec:
+              command: ["/bin/sh", "-c", "echo 1 > /proc/gvisor/checkpoint"]
+      volumes:
+        - name: dshm
+          emptyDir:
+              medium: Memory
+      nodeSelector:
+        cloud.google.com/compute-class: l4-gpu-cc
+  strategy:
+    type: Recreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-gemma-3-1b-it
+spec:
+  selector:
+    app: vllm-gemma-3-1b-it
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: vllm-gemma-3-1b-it
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: vllm-gemma-3-1b-it
+  minReplicas: 1
+  maxReplicas: 3
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 60
+  metrics:
+    - pods:
+        metric:
+          ## TODO : Identify the correct Prometheus metric exposed by vLLM
+          name: prometheus.googleapis.com|vllm:num_requests_waiting|gauge
+        target:
+          averageValue: 10
+          type: AverageValue
+      type: Pods

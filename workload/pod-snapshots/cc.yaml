@@ -1,0 +1,22 @@
+apiVersion: cloud.google.com/v1
+kind: ComputeClass
+metadata:
+  name: l4-gpu-cc
+spec:
+  nodePoolAutoCreation:
+    enabled: true
+  priorities:
+  - nodepools:
+    - "g2-standard-8-sbx"
+  # - spot: true
+  #   machineType: g2-standard-8
+  #   gpu:
+  #     type: nvidia-l4
+  #     count: 1
+  # - spot: true
+  #   machineFamily: g2
+  #   gpu:
+  #     type: nvidia-l4
+  #     count: 1
+  activeMigration:
+    optimizeRulePriority: true

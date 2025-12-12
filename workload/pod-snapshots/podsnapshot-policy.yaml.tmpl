@@ -1,0 +1,13 @@
+apiVersion: podsnapshot.gke.io/v1alpha1
+kind: PodSnapshotPolicy
+metadata:
+  name: snap-1-policy
+  namespace: $NAMESPACE
+spec:
+  storageConfigName: snap-1
+  selector:
+    matchLabels:
+      app: $APP_LABEL
+  triggerConfig:
+    type: workload
+    postCheckpoint: resume

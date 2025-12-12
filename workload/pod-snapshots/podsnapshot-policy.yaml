@@ -1,0 +1,13 @@
+apiVersion: podsnapshot.gke.io/v1alpha1
+kind: PodSnapshotPolicy
+metadata:
+  name: snap-1-policy
+  namespace: snapshotting
+spec:
+  storageConfigName: snap-1
+  selector:
+    matchLabels:
+      app: vllm-gemma-3-1b-it
+  triggerConfig:
+    type: workload
+    postCheckpoint: resume

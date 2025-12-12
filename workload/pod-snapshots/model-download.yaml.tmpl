@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: loader
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      annotations:
+        gke-gcsfuse/volumes: "true"   
+        gke-gcsfuse/ephemeral-storage-request: 30Gi
+      labels:
+        app: loader 
+    spec:
+      serviceAccountName: $KSA
+      containers:
+      - name: job
+        image: python:3.14.0-alpine3.22
+        imagePullPolicy: Always
+        command: ["/bin/sh"]
+        args:
+        - -c
+        - |
+          pip install -U "huggingface_hub==0.35.3"
+          hf download \
+            --repo-type model $MODEL_ID \
+            --local-dir /tmp/$MODEL_ID \
+            --token $(HUGGING_FACE_HUB_TOKEN)
+          cp -R /tmp/$MODEL_ID /gcs
+        env:   
+          - name: HUGGING_FACE_HUB_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: hf-secret
+                key: hf_api_token
+        resources:
+          requests:
+            cpu: "2"
+            memory: "5Gi"
+          limits:
+            cpu: "2"
+            memory: "5Gi"
+        volumeMounts:
+          - name: gcs-fuse-csi-ephemeral
+            mountPath: /gcs
+      restartPolicy: Never
+      volumes:
+        - name: gcs-fuse-csi-ephemeral
+          csi:
+            driver: gcsfuse.csi.storage.gke.io
+            volumeAttributes:
+              bucketName: $MODEL_BUCKET
+              mountOptions: "metadata-cache:ttl-secs:-1,metadata-cache:stat-cache-max-size-mb:-1,metadata-cache:type-cache-max-size-mb:-1,file-cache:max-size-mb:-1,file-cache:cache-file-for-range-read:true,file-cache:enable-parallel-downloads:true,file-system:kernel-list-cache-ttl-secs:-1,gcs-connection:client-protocol:grpc"
+              skipCSIBucketAccessCheck: "true"
