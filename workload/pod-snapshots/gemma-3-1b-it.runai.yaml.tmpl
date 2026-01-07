@@ -10,10 +10,12 @@ spec:
       app: vllm-gemma-3-1b-it
   template:
     metadata:
+      #annotations:
+      #  gke-pod-snapshot-role: checkpoint
       labels:
         app: vllm-gemma-3-1b-it
     spec:
-      serviceAccountName: default
+      serviceAccountName: $KSA
       runtimeClassName: gvisor
       containers:
         - name: inference-server
@@ -29,7 +31,14 @@ spec:
               memory: "25Gi"
               ephemeral-storage: 10Gi
               nvidia.com/gpu: "1"
+          # Warning  Failed              2m29s                  kubelet                                Error: failed to start containerd task "inference-server": OCI runtime restore failed: starting container: ... failed to validate restore spec: Args does not match across checkpoint restore for container: inference-server,
+          # checkpoint [/usr/local/bin/vllm serve --model=...]
+          # restore [vllm serve --model=...]
+          # command below and arg serve is needed, because of a mismatch between run and snapshot, "vllm" vs "/usr/local/bin/vllm"
+          # so "serve" needs to get added to the args as well
+          command: ["/usr/local/bin/vllm"]
           args:
+            - serve
             - --model=gs://$MODEL_BUCKET/$MODEL_ID
             - --tensor-parallel-size=1
             - --served-model-name=$MODEL_ID
@@ -68,8 +77,10 @@ spec:
             failureThreshold: 3600
             initialDelaySeconds: 2
             periodSeconds: 1
-            exec:
-              command: ["/bin/sh", "-c", "echo 1 > /proc/gvisor/checkpoint"]
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
       volumes:
         - name: dshm
           emptyDir:

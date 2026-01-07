@@ -4,7 +4,7 @@ https://docs.cloud.google.com/kubernetes-engine/docs/how-to/pod-snapshots
 # Enable it in the cluster
 ```
 export PROJECT_ID=
-PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID \
+export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID \
   --format 'get(projectNumber)')
 export CLUSTER_NAME=cluster-std
 export LOCATION=us-central1
@@ -23,11 +23,13 @@ gcloud beta container clusters update $CLUSTER_NAME \
    --location $LOCATION \
    --enable-pod-snapshots
 
+# need latest driver, i.e. 500+
 gcloud container node-pools create g2-standard-8-sbx \
   --cluster=$CLUSTER_NAME \
   --location=$LOCATION \
   --node-locations=us-central1-a,us-central1-b,us-central1-c \
   --machine-type=g2-standard-8 \
+  --accelerator type=nvidia-l4,count=1,gpu-driver-version=latest \
   --image-type=cos_containerd \
   --sandbox type=gvisor \
   --spot \
@@ -119,3 +121,14 @@ kubectl apply -n $NAMESPACE -f gemma-3-1b-it.runai.yaml
 ```
 
 ## Scale the model
+
+
+
+## Misc
+Update nodepool with latest driver
+```
+gcloud container node-pools update g2-standard-8-sbx \
+  --accelerator type=nvidia-l4,count=1,gpu-driver-version=latest \
+  --cluster $CLUSTER_NAME \
+  --location $LOCATION
+```
