@@ -10,8 +10,6 @@ spec:
       app: vllm-gemma-3-1b-it
   template:
     metadata:
-      #annotations:
-      #  gke-pod-snapshot-role: checkpoint
       labels:
         app: vllm-gemma-3-1b-it
     spec:
@@ -31,19 +29,83 @@ spec:
               memory: "25Gi"
               ephemeral-storage: 10Gi
               nvidia.com/gpu: "1"
-          # Warning  Failed              2m29s                  kubelet                                Error: failed to start containerd task "inference-server": OCI runtime restore failed: starting container: ... failed to validate restore spec: Args does not match across checkpoint restore for container: inference-server,
-          # checkpoint [/usr/local/bin/vllm serve --model=...]
-          # restore [vllm serve --model=...]
-          # command below and arg serve is needed, because of a mismatch between run and snapshot, "vllm" vs "/usr/local/bin/vllm"
-          # so "serve" needs to get added to the args as well
-          command: ["/usr/local/bin/vllm"]
+          command: ["/bin/sh", "-c"]
           args:
-            - serve
-            - --model=gs://$MODEL_BUCKET/$MODEL_ID
-            - --tensor-parallel-size=1
-            - --served-model-name=$MODEL_ID
-            - --load-format=runai_streamer
-            - --model-loader-extra-config={"distributed":true}
+            - |
+              #!/bin/sh
+              set -ex
+
+              VLLM_PID=0
+
+              # --- Signal Handler ---
+              term_handler() {
+                echo "Wrapper script received SIGTERM."
+                if [ "$VLLM_PID" -ne 0 ]; then
+                  echo "Sending SIGTERM to vLLM server (PID: $VLLM_PID)..."
+                  kill -TERM "$VLLM_PID"
+                  # Wait for the process to terminate
+                  wait "$VLLM_PID" || true
+                  echo "vLLM server terminated."
+                fi
+                exit 143 # 128 + 15 (SIGTERM)
+              }
+              # Trap SIGTERM and SIGINT
+              trap term_handler TERM INT
+
+              # --- Start vLLM in background ---
+              echo "Starting vLLM server in background..."
+              /usr/local/bin/vllm serve \
+                --model=gs://$MODEL_BUCKET/$MODEL_ID \
+                --tensor-parallel-size=1 \
+                --served-model-name=$MODEL_ID \
+                --load-format=runai_streamer \
+                --model-loader-extra-config='{"distributed":true}' \
+                --host=0.0.0.0 \
+                --port=8000 \
+                --disable-log-stats &
+              VLLM_PID=$!
+              echo "vLLM server started with PID $VLLM_PID"
+
+              # --- Health Check Loop ---
+              HEALTH_URL="http://localhost:8000/health"
+              echo "Waiting for vLLM server to be ready at $HEALTH_URL..."
+              for i in $(seq 1 360); do
+                if curl -sSf $HEALTH_URL > /dev/null; then
+                  echo "vLLM server is ready."
+                  break
+                fi
+                if ! kill -0 $VLLM_PID > /dev/null 2>&1; then
+                  echo "vLLM server process (PID $VLLM_PID) exited prematurely."
+                  wait $VLLM_PID || true # Capture exit code
+                  exit 1
+                fi
+                if [ $i -eq 360 ]; then
+                  echo "Timed out waiting for vLLM server to become healthy."
+                  kill -TERM $VLLM_PID || true
+                  exit 1
+                fi
+                sleep 5
+              done
+
+              # --- Trigger Checkpoint ---
+              CHECKPOINT_PATH="/proc/gvisor/checkpoint"
+              if [ -f "$CHECKPOINT_PATH" ]; then
+                echo "Triggering gVisor checkpoint..."
+                if echo 1 > "$CHECKPOINT_PATH"; then
+                  echo "Checkpoint trigger command sent successfully."
+                else
+                  echo "Failed to write to $CHECKPOINT_PATH."
+                fi
+              else
+                echo "gVisor checkpoint path $CHECKPOINT_PATH not found."
+              fi
+
+              # --- Wait for vLLM termination ---
+              echo "Wrapper script now waiting for vLLM server (PID $VLLM_PID) to terminate..."
+              wait $VLLM_PID
+              VLLM_EXIT_CODE=$?
+              echo "vLLM server exited with code $VLLM_EXIT_CODE"
+              exit $VLLM_EXIT_CODE
           volumeMounts:
             - mountPath: /dev/shm
               name: dshm
