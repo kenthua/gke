@@ -121,11 +121,14 @@ kubectl apply -n $NAMESPACE -f gemma-3-1b-it.runai.yaml
 ```
 
 ## Scale the model
+```
+kubectl scale depoy vllm-gemma-3-1b-it --replicas=2
+```
 
-
+> NOTE: The initial pod that triggers the snapshot will get restarted, as part of a pod hibernation? snapshot agent expected behavior?
 
 ## Misc
-Update nodepool with latest driver
+Update nodepool with latest driver if needed
 ```
 gcloud container node-pools update g2-standard-8-sbx \
   --accelerator type=nvidia-l4,count=1,gpu-driver-version=latest \
