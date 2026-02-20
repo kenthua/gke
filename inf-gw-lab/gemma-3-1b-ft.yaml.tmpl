@@ -47,7 +47,7 @@ spec:
       serviceAccountName: default
       containers:
         - name: inference-server
-          image: vllm/vllm-openai:v0.8.5.post1
+          image: vllm/vllm-openai:v0.15.1
           resources:
             requests:
               cpu: "2"
@@ -114,7 +114,8 @@ spec:
               mountOptions: "metadata-cache:ttl-secs:-1,metadata-cache:stat-cache-max-size-mb:-1,metadata-cache:type-cache-max-size-mb:-1,file-cache:max-size-mb:-1,file-cache:cache-file-for-range-read:true,file-cache:enable-parallel-downloads:true,file-system:kernel-list-cache-ttl-secs:-1,gcs-connection:client-protocol:grpc"
               skipCSIBucketAccessCheck: "true"
       nodeSelector:
-        cloud.google.com/gke-accelerator: nvidia-l4
+        cloud.google.com/gke-accelerator: nvidia-rtx-pro-6000
+        cloud.google.com/gke-spot: "true"
   strategy:
     type: Recreate
 ---

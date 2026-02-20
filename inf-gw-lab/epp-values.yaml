@@ -3,9 +3,9 @@ provider:
     autopilot: true
 inferenceExtension:
   replicas: 3
-  enableLeaderElection: true
+  #enableLeaderElection: true
   monitoring:
-    gke:
+    prometheus:
       enabled: true
   pluginsConfigFile: "plugins-v2-custom.yaml"
   pluginsCustomConfig:
