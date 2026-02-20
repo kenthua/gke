@@ -16,7 +16,7 @@ spec:
       serviceAccountName: default
       containers:
         - name: inference-server
-          image: vllm/vllm-openai:v0.8.5.post1
+          image: vllm/vllm-openai:v0.15.1
           resources:
             requests:
               cpu: "2"
@@ -79,7 +79,8 @@ spec:
           emptyDir:
             medium: Memory
       nodeSelector:
-        cloud.google.com/gke-accelerator: nvidia-l4
+        cloud.google.com/gke-accelerator: nvidia-rtx-pro-6000
+        cloud.google.com/gke-spot: "true"
   strategy:
     type: Recreate
 ---
