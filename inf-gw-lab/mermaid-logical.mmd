@@ -15,7 +15,7 @@ flowchart LR
         end
         
         subgraph BBR_Dep["BBR Deployment"]
-            BBR["BBR Pod<br/>(Injects X-Gateway-Model-Name)"]
+            BBR["BBR Pod<br/>(Injects header -<br/>X-Gateway-Model-Name)"]
         end
         
         subgraph EPP1_Dep["Endpoint Picker 1 Deployment"]
@@ -32,7 +32,7 @@ flowchart LR
     
     Ctrl -.->|"Configures"| LB
     
-    BBR -.->|"Callout"| RE
+    RE <-->|"Callout"| BBR
     TE <-->|"Callout"| EPP1
     TE <-->|"Callout"| EPP2
     
