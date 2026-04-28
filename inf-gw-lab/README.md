@@ -2,6 +2,13 @@
 
 Set of scripts and Kubernetes configuration files to deploy Gemma models through vLLM on Google Kubernetes Engine (GKE). GKE Inference Gatewa is used to route traffic between models.
 
+## Architecture Diagrams
+
+This project includes Mermaid diagrams to visualize the architecture:
+
+- [mermaid-traffic.mmd](./mermaid-traffic.mmd) - Traffic routing flow from client to pods.
+- [mermaid-logical.mmd](./mermaid-logical.mmd) - Logical configuration of Gateway API and service extensions.
+
 ## Scripts
 Intended to run in the order described:
 

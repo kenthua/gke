@@ -1,0 +1,50 @@
+flowchart LR
+    subgraph LB["Regional Application Load Balancer"]
+        LB_Node["Backend Service"]
+        RE["Route Extension"]
+        TE["Traffic Extension"]
+    end
+    
+    subgraph GKE["GKE Cluster"]
+        direction TB
+        
+        subgraph CP["Gateway API"]
+            GW["Gateway"] --> Ctrl["Controller"]
+            Route["HTTPRoute"] --> Ctrl
+            IP["InferencePool"]
+        end
+        
+        subgraph BBR_Dep["BBR Deployment"]
+            BBR["BBR Pod<br/>(Injects X-Gateway-Model-Name)"]
+        end
+        
+        subgraph EPP1_Dep["Endpoint Picker 1 Deployment"]
+            EPP1["EPP Pod(s)"]
+        end
+        
+        subgraph EPP2_Dep["Endpoint Picker 2 Deployment"]
+            EPP2["EPP Pod(s)"]
+        end
+        
+        HPA["Horizontal pod autoscaler(s)"]
+        VLLM["vLLM Pods"]
+    end
+    
+    Ctrl -.->|"Configures"| LB
+    
+    BBR -.->|"Callout"| RE
+    TE <-->|"Callout"| EPP1
+    TE <-->|"Callout"| EPP2
+    
+    IP -.->|"Configures"| EPP1
+    IP -.->|"Configures"| EPP2
+    
+    EPP1 -.->|"Metadata"| LB
+    EPP2 -.->|"Metadata"| LB
+    
+    EPP1 -.->|"Metrics"| HPA
+    EPP2 -.->|"Metrics"| HPA
+    
+    HPA -.->|"Scales"| VLLM
+    
+    LB_Node ==>|"Routes to"| VLLM

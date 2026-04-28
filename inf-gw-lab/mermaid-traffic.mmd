@@ -1,0 +1,20 @@
+flowchart TD
+    Client["User Client<br/>Payload: {model: 'google/gemma-3-1b-it', ...}"] --> LB["Regional Application Load Balancer"]
+    
+    subgraph GKE["GKE Cluster"]
+        subgraph Pods1["Deployment Instruction-Tuned"]
+            direction TB
+            VLLM1["vllm-gemma-3b-it"]
+            VLLM1_2["vllm-gemma-3b-it"]
+        end
+        
+        subgraph Pods2["Deployment Fine-Tuned"]
+            VLLM2["vLLM (gemma-3-1b-ft)"]
+        end
+    end
+    
+    style VLLM1_2 stroke-dasharray: 5 5
+    
+    LB -->|"Routes to"| VLLM1
+    LB -->|"Routes to"| VLLM1_2
+    LB -->|"Routes to"| VLLM2
