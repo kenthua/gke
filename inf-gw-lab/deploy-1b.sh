@@ -43,7 +43,7 @@ helm install bbr \
   --version v1.5.0 \
   --set provider.name=gke \
   --set inferenceGateway.name=vllm-xlb \
-oci://registry.k8s.io/gateway-api-inference-extension/charts/body-based-routing
+  oci://registry.k8s.io/gateway-api-inference-extension/charts/body-based-routing
 
 
 echo "### Deploy Inference Pool for gemma 3 1b"
