@@ -92,6 +92,3 @@ inferenceExtension:
 
 inferencePool:
   modelServerProtocol: http
-  modelServers:
-    matchLabels:
-      llm-d.ai/guide: "optimized-baseline"
