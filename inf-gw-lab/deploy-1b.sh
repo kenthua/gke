@@ -40,7 +40,7 @@ kubectl apply -f hr-gemma-3-1b.yaml
 
 echo "### Deploy body-based routing"
 helm install bbr \
-  --version v1.3.1 \
+  --version v1.5.0 \
   --set provider.name=gke \
   --set inferenceGateway.name=vllm-xlb \
 oci://registry.k8s.io/gateway-api-inference-extension/charts/body-based-routing
@@ -52,7 +52,7 @@ helm install ${INFERENCE_POOL} \
   --dependency-update \
   --set inferencePool.modelServers.matchLabels.app=vllm-gemma-3-1b \
   --set provider.name=gke \
-  --version v1.3.1 \
+  --version v1.5.0 \
   oci://registry.k8s.io/gateway-api-inference-extension/charts/inferencepool \
   -f epp-values.yaml
 

@@ -27,9 +27,24 @@ gcloud container clusters create-auto $CLUSTER_NAME \
     --release-channel=rapid \
     --auto-monitoring-scope=ALL
 
-kubectl apply -f https://github.com/kubernetes-sigs/gateway-api-inference-extension/raw/v1.0.0/config/crd/bases/inference.networking.x-k8s.io_inferenceobjectives.yaml
-
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/k8s-stackdriver/master/custom-metrics-stackdriver-adapter/deploy/production/adapter_new_resource_model.yaml
+
+# llm-d updates start
+
+#kubectl apply -f https://github.com/kubernetes-sigs/gateway-api-inference-extension/raw/v1.4.0/config/crd/bases/inference.networking.x-k8s.io_inferenceobjectives.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/gateway-api-inference-extension/v1.5.0/config/crd/bases/inference.networking.x-k8s.io_inferenceobjectives.yaml
+
+export GAIE_VERSION=v1.5.0
+export GUIDE_NAME="optimized-baseline"
+export NAMESPACE=llm-d-optimized-baseline
+export INFRA_PROVIDER=gke   # gke | base
+
+kubectl apply -k \
+  "https://github.com/kubernetes-sigs/gateway-api-inference-extension/config/crd?ref=${GAIE_VERSION}"
+
+kubectl create namespace ${NAMESPACE}
+
+## llm-d updates end
 
 PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format 'get(projectNumber)')
 
