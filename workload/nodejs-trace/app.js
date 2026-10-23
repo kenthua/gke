@@ -16,56 +16,60 @@
 'use strict';
 
 // [START trace_app]
-require('@google-cloud/trace-agent').start();
+if (process.env.ENABLE_TRACE !== 'false') {
+  try {
+    require('@google-cloud/trace-agent').start();
+  } catch (err) {
+    console.warn('Trace agent failed to start:', err.message);
+  }
+}
 
 const express = require('express');
 const got = require('got');
 
 const app = express();
-const DISCOVERY_URL = 'https://www.googleapis.com/discovery/v1/apis';
-const ALT_URL = 'https://jsonplaceholder.typicode.com/posts';
-
-var names = "";
+const DISCOVERY_URL = process.env.DISCOVERY_URL || 'https://www.googleapis.com/discovery/v1/apis';
+const ALT_URL = process.env.ALT_URL || 'https://jsonplaceholder.typicode.com/posts';
 
 // This incoming HTTP request should be captured by Trace
-app.get('/', (req, res) => {
-  // This outgoing HTTP request should be captured by Trace
-  got(DISCOVERY_URL, { json: true })
-    .then((response) => {
-      names = response.body.items.map((item) => item.name);
+app.get('/', async (req, res) => {
+  try {
+    // These outgoing HTTP requests should be captured by Trace
+    const [discoveryResponse, altResponse] = await Promise.all([
+      got(DISCOVERY_URL, { responseType: 'json' }),
+      got(ALT_URL, { responseType: 'json' })
+    ]);
 
-      //res
-      //  .status(200)
-      //  .send(names.join('\n'))
-      //  .end();
-    })
-    .catch((err) => {
-      console.error(err);
+    const names = (discoveryResponse.body && discoveryResponse.body.items)
+      ? discoveryResponse.body.items.map((item) => item.name)
+      : [];
+
+    const altBody = typeof altResponse.body === 'string'
+      ? altResponse.body
+      : JSON.stringify(altResponse.body);
+
+    res
+      .status(200)
+      .send('v2' + names.join('\n') + altBody)
+      .end();
+  } catch (err) {
+    console.error(err);
+    if (!res.headersSent) {
       res
         .status(500)
         .end();
-    });
-
-  got(ALT_URL, { json: true })
-  .then((response) => {
-    res
-      .status(200)
-      .send('v2' + names.join('\n') + response.body)
-      .end();
-  })
-  .catch((err) => {
-    console.error(err);
-    res
-      .status(500)
-      .end();
-  });
-
+    }
+  }
 });
 
 // Start the server
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
-  console.log('Press Ctrl+C to quit.');
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`App listening on port ${PORT}`);
+    console.log('Press Ctrl+C to quit.');
+  });
+}
+
+module.exports = app;
 // [END trace_app]

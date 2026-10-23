@@ -1,6 +1,6 @@
 FROM python:3-alpine
 
-RUN apk add --update mariadb-dev libc-dev gcc
+RUN apk add --update mariadb-dev libc-dev gcc pkgconfig
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app

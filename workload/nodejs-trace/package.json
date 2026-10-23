@@ -10,26 +10,18 @@
     "url": "https://github.com/GoogleCloudPlatform/nodejs-docs-samples.git"
   },
   "engines": {
-    "node": ">=4.3.2"
+    "node": ">=18"
   },
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "node test.js"
   },
   "dependencies": {
-    "@google-cloud/trace-agent": "2.4.1",
-    "express": "4.15.4",
-    "got": "7.1.0"
+    "@google-cloud/trace-agent": "^8.0.0",
+    "express": "^4.21.2",
+    "got": "^11.8.6"
   },
-  "devDependencies": {
-    "@google-cloud/nodejs-repo-tools": "1.4.17"
-  },
-  "cloud-repo-tools": {
-    "test": {
-      "app": {
-        "msg": "acceleratedmobilepageurl"
-      }
-    },
-    "requiresKeyFile": true,
-    "requiresProjectId": true
+  "overrides": {
+    "uuid": "^11.1.1"
   }
 }
