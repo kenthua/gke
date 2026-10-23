@@ -14,10 +14,10 @@
 
 # https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format
 
-Flask==1.0.3
-flask-cors==3.0.9
-gunicorn==19.9.0
-google-auth==1.6.2
-requests==2.22.0
+Flask>=3.1.0
+flask-cors>=6.0.0
+gunicorn>=23.0.0
+google-auth>=2.27.0
+requests>=2.32.3
 
 
