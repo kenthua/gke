@@ -25,7 +25,20 @@ if (process.env.ENABLE_TRACE !== 'false') {
 }
 
 const express = require('express');
-const got = require('got');
+
+let gotInstance;
+async function getGot() {
+  if (!gotInstance) {
+    try {
+      const rawGot = require('got');
+      gotInstance = rawGot.default || rawGot;
+    } catch {
+      const rawGot = await import('got');
+      gotInstance = rawGot.default || rawGot;
+    }
+  }
+  return gotInstance;
+}
 
 const app = express();
 const DISCOVERY_URL = process.env.DISCOVERY_URL || 'https://www.googleapis.com/discovery/v1/apis';
@@ -34,6 +47,7 @@ const ALT_URL = process.env.ALT_URL || 'https://jsonplaceholder.typicode.com/pos
 // This incoming HTTP request should be captured by Trace
 app.get('/', async (req, res) => {
   try {
+    const got = await getGot();
     // These outgoing HTTP requests should be captured by Trace
     const [discoveryResponse, altResponse] = await Promise.all([
       got(DISCOVERY_URL, { responseType: 'json' }),
