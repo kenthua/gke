@@ -1,0 +1,133 @@
+name: Security & Vulnerability Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run daily at 06:00 UTC to continuously monitor for new CVEs
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  test:
+    name: Run Automated Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Python test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest "flask>=3.1.0" "flask-cors>=6.0.0" "gunicorn>=23.0.0" "google-auth>=2.27.0" "requests>=2.32.3" "google-cloud-logging>=3.10.0"
+
+      - name: Test gclb/multi-path
+        run: |
+          cd gclb/multi-path
+          pytest test_app.py
+
+      - name: Test identity-platform backend
+        run: |
+          cd workload/identity-platform/src/backend
+          pytest test_app.py
+
+      - name: Test identity-platform frontend
+        run: |
+          cd workload/identity-platform/src/frontend
+          pytest test_app.py
+
+      - name: Test istio-multi mainservice
+        run: |
+          cd workload/istio-multi/mainservice
+          pytest test_main.py
+
+      - name: Test istio-multi service1
+        run: |
+          cd workload/istio-multi/service1
+          pytest test_main.py
+
+      - name: Test mysql-python-cloud-sql-proxy
+        run: |
+          cd workload/mysql-python-cloud-sql-proxy
+          pytest test_application.py
+
+      - name: Test nodejs-trace
+        run: |
+          cd workload/nodejs-trace
+          npm ci
+          npm test
+
+  security-audits:
+    name: Dependency Audits & Trivy Scan
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run pip-audit
+        run: |
+          python -m pip install --upgrade pip
+          pip install pip-audit
+          pip-audit -r gclb/multi-path/requirements.txt \
+                     -r workload/identity-platform/src/backend/requirements.txt \
+                     -r workload/identity-platform/src/frontend/requirements.txt \
+                     -r workload/istio-multi/mainservice/requirements.txt \
+                     -r workload/istio-multi/service1/requirements.txt
+
+      - name: Run npm audit
+        run: |
+          cd workload/nodejs-trace
+          npm audit
+
+      - name: Run Trivy vulnerability scanner (table report)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scanners: 'vuln'
+          severity: 'CRITICAL,HIGH'
+          format: 'table'
+          exit-code: '1'
+
+      - name: Run Trivy SARIF scanner
+        if: always()
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scanners: 'vuln'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        continue-on-error: true
+        with:
+          sarif_file: 'trivy-results.sarif'
