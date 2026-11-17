@@ -1,0 +1,22 @@
+apiVersion: ate.dev/v1
+kind: WorkerPool
+metadata:
+  name: microvm-pool
+  namespace: default
+  labels:
+    ate.dev/worker-pool: microvm-pool
+spec:
+  replicas: 2
+  workerImage: ghcr.io/agent-substrate/substrate/ateworker-microvm:v1.0.0
+  sandboxClasses:
+    - name: microvm
+  template:
+    nodeSelector:
+      cloud.google.com/compute-class: substrate-n2
+    resources:
+      requests:
+        cpu: 250m
+        memory: 1Gi
+      limits:
+        cpu: "1"
+        memory: 1Gi

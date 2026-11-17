@@ -1,0 +1,40 @@
+apiVersion: cloud.google.com/v1
+kind: ComputeClass
+metadata:
+  name: substrate-n2
+spec:
+  description: "Agent Substrate n2-standard-4 compute class with nested virtualization and high-density sysctls"
+  nodePoolAutoCreation:
+    enabled: true
+  nodePoolConfig:
+    imageType: cos_containerd
+    # Target project node service account (populated via envsubst from ate-dev-env.sh / .env):
+    serviceAccount: ${NODE_SA_EMAIL}
+  activeMigration:
+    optimizeRulePriority: true
+  autoscalingPolicy:
+    consolidationDelayMinutes: 10
+    consolidationThreshold: 70
+  priorities:
+    # Priority 1: On-Demand n2-standard-4 (4 vCPU, 16 GB RAM) with pd-balanced boot disk and nested virtualization
+    - machineType: n2-standard-4
+      spot: false
+      enableNestedVirtualization: true
+      storage:
+        bootDiskType: pd-balanced
+        bootDiskSize: 100
+      nodeSystemConfig:
+        kubeletConfig:
+          podPidsLimit: 16384
+        linuxNodeConfig:
+          sysctls:
+            fs.inotify.max_user_instances: 16384
+            fs.inotify.max_user_watches: 524288
+            fs.aio-max-nr: 1048576
+            net.ipv4.neigh.default.gc_thresh1: 4096
+            net.ipv4.neigh.default.gc_thresh2: 8192
+            net.ipv4.neigh.default.gc_thresh3: 16384
+            vm.max_map_count: 524288
+            kernel.keys.maxkeys: 5000
+            kernel.keys.maxbytes: 125000
+  whenUnsatisfiable: ScaleUpAnyway

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ate-system
+  labels:
+    # Schedules all non-DaemonSet pods in ate-system (e.g. postgres-0 StatefulSet,
+    # ate-api-server, ate-controller, atenet-router) onto nodes provisioned for
+    # substrate-n2, while letting DaemonSets run across all eligible nodes.
+    cloud.google.com/default-compute-class-non-daemonset: substrate-n2

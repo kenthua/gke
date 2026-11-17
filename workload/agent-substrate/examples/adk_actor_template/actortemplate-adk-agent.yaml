@@ -1,0 +1,40 @@
+# ActorTemplate where the ADK Agent itself runs inside the MicroVM Actor.
+# Built via Cloud Build (after sourcing ./ate-dev-env.sh):
+#   gcloud builds submit examples/adk_actor_template \
+#     --project="${PROJECT_ID}" \
+#     --region="${GCE_REGION}" \
+#     --tag="${ADK_AGENT_IMAGE_REPO}:v1"
+#
+# Apply with envsubst so ${ADK_AGENT_IMAGE} and ${PROJECT_ID} are populated from .env:
+#   source ./ate-dev-env.sh
+#   envsubst < examples/adk_actor_template/actortemplate-adk-agent.yaml | kubectl ate create actor-template -f -
+metadata:
+  atespace: default
+  name: adk-agent-actor-template
+workerSelector:
+  matchLabels:
+    ate.dev/worker-pool: microvm-pool
+containers:
+- name: adk-agent
+  image: ${ADK_AGENT_IMAGE}
+  command:
+  - python3
+  - /actor/server.py
+  env:
+  - name: GOOGLE_GENAI_USE_VERTEXAI
+    value: "true"
+  - name: GOOGLE_CLOUD_PROJECT
+    value: "${PROJECT_ID}"
+  - name: GOOGLE_CLOUD_LOCATION
+    value: "global"
+  wakeupProbe:
+    httpGet:
+      path: /healthz
+      port: 8080
+    timeoutSeconds: 30
+resources:
+  limits:
+    cpuMillicores: 500
+    memoryBytes: 536870912 # 512 MiB RAM (fits within 960Mi worker capacity)
+snapshotConfig:
+  preferredFidelity: SNAPSHOT_FIDELITY_MEMORY

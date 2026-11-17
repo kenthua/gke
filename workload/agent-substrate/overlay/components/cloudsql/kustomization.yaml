@@ -1,0 +1,42 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Adds the Cloud SQL Auth Proxy sidecar to ate-api-server, for the PostgreSQL
+# store on Cloud SQL (tools/setup-gcp/cloud-sql.md). The installer does not
+# use it.
+#
+# agent-substrate/substrate's ate-setup used to apply this patch itself when
+# ATE_API_POSTGRES_CLOUDSQL_INSTANCE was set. With this component, the install
+# has to supply the per-install values itself:
+#
+# - ConfigMap ate-system/ate-api-server-envvars, which the sidecar reads
+#   through envFrom: ATE_API_POSTGRES_CLOUDSQL_INSTANCE (the instance
+#   connection name, PROJECT:REGION:INSTANCE, passed as the proxy's argument),
+#   CSQL_PROXY_AUTO_IAM_AUTHN=true, CSQL_PROXY_PORT=5432,
+#   CSQL_PROXY_HEALTH_CHECK=true, CSQL_PROXY_HTTP_ADDRESS=0.0.0.0,
+#   CSQL_PROXY_HTTP_PORT=9801 (the patch's probes use it),
+#   CSQL_PROXY_STRUCTURED_LOGS=true, and CSQL_PROXY_PRIVATE_IP=true or
+#   CSQL_PROXY_PSC=true unless the instance is reached on its public IP.
+# - The iam.gke.io/gcp-service-account annotation on ServiceAccount
+#   ate-system/ate-api-server, naming the Cloud SQL GSA that
+#   `setup-gcp create cloudsql` creates. The proxy authenticates as it.
+# - ate-api-server's read/write connection string
+#   (ATE_API_POSTGRES_READ_WRITE_CONNECTION_STRING in ate-setup) pointed at
+#   the proxy: user=<GSA email without .gserviceaccount.com> host=127.0.0.1
+#   port=5432 dbname=atepg sslmode=disable.
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+patches:
+  - path: proxy-sidecar-patch.yaml

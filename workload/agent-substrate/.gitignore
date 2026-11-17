@@ -1,0 +1,23 @@
+# Python bytecode & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.pytest_cache/
+
+# Environment & credentials
+.env
+*.pem
+*.key
+*credentials*.json
+
+# Local agent workspace rules & plugins
+.agents/
+GEMINI.md
+
+# OS / Editor / Scratch files
+.DS_Store
+*.swp
+*~
+hello

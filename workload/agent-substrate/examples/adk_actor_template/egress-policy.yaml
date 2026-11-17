@@ -1,0 +1,11 @@
+# Agent Substrate EgressPolicy allowing the ADK Agent Actor to reach Google Cloud / Vertex AI APIs
+metadata:
+  atespace: default
+  name: default
+rules:
+- tlsPassthrough:
+    hostnames:
+    - "*.googleapis.com"
+    ports:
+      numbers:
+      - 443

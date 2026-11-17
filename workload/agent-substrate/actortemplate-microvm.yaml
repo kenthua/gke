@@ -1,0 +1,20 @@
+metadata:
+  atespace: default
+  name: microvm-actor-template
+workerSelector:
+  matchLabels:
+    ate.dev/worker-pool: microvm-pool
+containers:
+- name: hello-app
+  image: us-docker.pkg.dev/google-samples/containers/gke/hello-app@sha256:649188051906c9df7f87fb2ef04a21acbdb009c0877fa67b3132b83230411f6e
+  wakeupProbe:
+    httpGet:
+      path: /
+      port: 8080
+    timeoutSeconds: 30
+resources:
+  limits:
+    cpuMillicores: 500
+    memoryBytes: 536870912
+snapshotConfig:
+  preferredFidelity: SNAPSHOT_FIDELITY_MEMORY
