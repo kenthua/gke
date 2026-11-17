@@ -203,7 +203,7 @@ For workloads requiring hardware-assisted nested virtualization (`/dev/kvm`), en
 
 ## AI Agent Examples & Integration
 
-See the [`examples/`](examples/) directory for runnable scripts and patterns to leverage the deployed MicroVM actors across all three **Google ADK + Agent Substrate** integration architectures:
+See the [`examples/`](examples/) directory (and the full [**Test Scenarios Matrix (`examples/README.md#3-test-scenarios-matrix--quickstart`)**](examples/README.md#3-test-scenarios-matrix--quickstart)) for runnable scripts and patterns to leverage the deployed MicroVM actors across all three **Google ADK + Agent Substrate** integration architectures:
 
 | Pattern | Where ADK Runs | How Actor Is Invoked | What Is Snapshotted to GCS | Example Files |
 |---|---|---|---|---|

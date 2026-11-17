@@ -34,7 +34,24 @@ Agent Substrate MicroVM Actors solve this with:
 
 ---
 
-## 3. Quickstart: Try It Now
+## 3. Test Scenarios Matrix & Quickstart
+
+The table below summarizes all **9 test scenarios** included in this directory, what each scenario validates, and how to run it:
+
+| # | Test Scenario | Command / Entrypoint | What It Verifies | Details |
+|---|---|---|---|---|
+| **1** | **CLI End-to-End MicroVM Lifecycle** | `./examples/quickstart.sh` | Creates actor from `microvm-actor-template`, resumes in ~1.2s, opens proxy, queries HTTP endpoint, suspends to GCS (`0 CPU / 0 RAM`), and deletes. | [Option A](#option-a-run-the-cli-bash-demo) |
+| **2** | **Python SDK Context Manager & Suspend/Resume Cycle** | `python3 examples/agent_sandbox_client.py` | Tests `ActorSandbox` programmatic lifecycle: create, resume, proxy tunnel, `GET /`, `suspend()`, 1s sleep, `resume()`, and automatic teardown. | [Option B](#option-b-run-the-python-client-benchmark) |
+| **3** | **Multi-Turn Conversational Tool Simulation** | `python3 examples/agent_tool_example.py` | Simulates a multi-turn user conversation where the sandbox wakes on tool calls and suspends between turns while preserving state. | [Option C](#option-c-run-the-multi-turn-conversational-tool-simulation) |
+| **4** | **Pattern 1a: Idiomatic ADK Agent (`tools=[...]` + Auto-Suspend)** | `python3 examples/adk_minimal_agent.py` | ~25-line ADK Agent ([`microvm_tool.py`](microvm_tool.py)) where `sandbox.execute` / `sandbox.run_python` auto-wakes the MicroVM on tool call and `after_agent_callback` auto-suspends it at the end of each turn. | [Option D](#option-d-pattern-1--run-the-clean-idiomatic-adk-agent-tools) |
+| **5** | **Pattern 1b: Diagnostic Multi-Tool ADK Agent** | `python3 examples/adk_agent_sandbox_example.py` | 3-turn ADK flow where the LLM explicitly chooses `get_sandbox_status`, `query_microvm_sandbox`, and `suspend_microvm_sandbox` (Turn 1: boot & query; Turn 2: user steps away -> suspend; Turn 3: wake from snapshot & re-verify). | [Option E](#option-e-pattern-1--run-the-diagnostic-multi-tool-adk-agent) |
+| **6** | **Pattern 2: ADK `BaseCodeExecutor` with Stateful RAM Snapshot** | `python3 examples/adk_code_executor_example.py` | `SubstrateMicroVMCodeExecutor(BaseCodeExecutor)` intercepts ```` ```python ```` blocks against `python-sandbox-template`. Turn 1 defines `portfolio` in MicroVM RAM and suspends to GCS; Turn 2 wakes from snapshot with `portfolio` still in RAM and mutates it in-place. | [Option F](#option-f-pattern-2--run-the-adk-codeexecutor-agent-code_executor) |
+| **7a** | **Pattern 3a: ADK Agent *Is* the `ActorTemplate` (Multi-Turn Resident ADK Runtime)** | `python3 examples/adk_actor_template/client_demo.py` | Runs `get_fast_api_app()` inside `adk-user-alice` (`adk-agent-actor-template`), injects `EgressPolicy` + short-lived ADC token via the local metadata bridge (`127.0.0.1:18080`), writes `/tmp/workspace/notes.txt` & runs `uname -a`, suspends the entire ADK runtime to GCS, wakes in Turn 2 to read `notes.txt` and recall Turn 1, and leaves the actor suspended (`auto_delete=False`). | [Option G](#option-g-pattern-3--the-adk-agent-is-the-actortemplate-ongoing-stateful-sessions) |
+| **7b** | **Pattern 3b: Ongoing Cross-Process Resumption & Multi-User Isolation** | `python3 examples/adk_actor_template/client_demo.py "<prompt>"` | Resumes `adk-user-alice` from a new process with all prior `InMemorySessionService` events and `/tmp/workspace` files intact in RAM, or spawns an isolated MicroVM (`--user bob`) per user. | [Option G](#option-g-pattern-3--the-adk-agent-is-the-actortemplate-ongoing-stateful-sessions) & [`adk_actor_template/README.md`](adk_actor_template/README.md) |
+| **8** | **Interactive Antigravity (`agy`) / MCP Server (`ate-sandbox`)** | [`tools/ate_mcp_server.py`](../tools/ate_mcp_server.py) | Port-forwards `svc/api` (`18443`) and `agy-sandbox` (`18880`) and tests `execute_code`, `get_sandbox_state`, `suspend_sandbox`, `resume_sandbox`, and `revert_sandbox` (golden snapshot rollback). | [Option H](#option-h-interactive-antigravity-agy-session--port-forward-ate-api--run-code-snippets) |
+| **9** | **`WorkerPool` Time-Sharing & Locality Inspection** | `kubectl ate get workers` / `kubectl ate top worker` | Observes live worker slot reservations (`FREE` vs `ASSIGNED`), CPU/RAM multiplexing across active/suspended actors, `status.workerAssignment`, and `status.snapshots[].locality`. | [Section 6](#6-monitoring-workerpool-time-sharing--capacity) |
+
+---
 
 ### Option A: Run the CLI Bash Demo
 Run the automated end-to-end demo to see an actor spawn, serve requests, and suspend:
